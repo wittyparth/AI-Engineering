@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚜️ Solo Leveling — Hunter Tracker</title>
+<style>
+  /* ═══════════════════════════════════════════
+     SOLO LEVELING TRACKER — Dark Aesthetic
+     ═══════════════════════════════════════════ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #0a0a12;
+    --bg2: #12121e;
+    --bg3: #1a1a2e;
+    --bg4: #222240;
+    --accent: #7c3aed;
+    --accent2: #a855f7;
+    --accent3: #c084fc;
+    --gold: #f59e0b;
+    --gold2: #fbbf24;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --green: #22c55e;
+    --green2: #16a34a;
+    --red: #ef4444;
+    --red2: #dc2626;
+    --blue: #3b82f6;
+    --cyan: #06b6d4;
+    --rank-e: #94a3b8;
+    --rank-d: #22c55e;
+    --rank-c: #3b82f6;
+    --rank-b: #a855f7;
+    --rank-a: #f59e0b;
+    --rank-s: #ef4444;
+    --rank-nl: #ec4899;
+    --rank-sm: #fbbf24;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* ═══ HEADER ═══ */
+  .header {
+    background: linear-gradient(135deg, var(--bg2) 0%, #1a0a2e 100%);
+    border-bottom: 1px solid var(--bg4);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-left h1 {
+    font-size: 20px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent2), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+  }
+  .rank-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .rank-badge.e { background: var(--rank-e); color: #000; }
+  .rank-badge.d { background: var(--rank-d); color: #000; }
+  .rank-badge.c { background: var(--rank-c); color: #fff; }
+  .rank-badge.b { background: var(--rank-b); color: #fff; }
+  .rank-badge.a { background: var(--rank-a); color: #000; }
+  .rank-badge.s { background: var(--rank-s); color: #fff; }
+  .rank-badge.nl { background: var(--rank-nl); color: #fff; }
+  .rank-badge.sm { background: var(--rank-sm); color: #000; }
+
+  .header-stats {
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+  }
+  .header-stats span {
+    color: var(--text2);
+  }
+  .header-stats strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  /* ═══ TABS ═══ */
+  .tabs {
+    display: flex;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--bg4);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    color: var(--text3);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .tab-btn:hover {
+    color: var(--text2);
+    background: var(--bg3);
+  }
+  .tab-btn.active {
+    color: var(--accent2);
+    border-bottom-color: var(--accent2);
+    background: rgba(124, 58, 237, 0.08);
+  }
+
+  /* ═══ MAIN CONTENT ═══ */
+  .main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ═══ CARDS ═══ */
+  .card {
+    background: var(--bg3);
+    border: 1px solid var(--bg4);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card h2 small {
+    font-weight: 400;
+    color: var(--text3);
+    font-size: 12px;
+  }
+
+  /* ═══ XP BAR ═══ */
+  .xp-section {
+    margin-bottom: 20px;
+  }
+  .xp-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .xp-header .label { color: var(--text2); }
+  .xp-header .value { color: var(--accent2); font-weight: 700; }
+  .xp-bar-outer {
+    height: 10px;
+    background: var(--bg4);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .xp-bar-inner {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    transition: width 0.8s ease;
+  }
+
+  /* ═══ STATS DISPLAY ═══ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--bg4);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-card .icon { font-size: 24px; margin-bottom: 4px; }
+  .stat-card .name {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .stat-card .value {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 4px 0;
+  }
+  .stat-card .bar-outer {
+    height: 4px;
+    background: var(--bg4);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .stat-card .bar-inner {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  /* ═══ STREAK CALENDAR ═══ */
+  .streak-container { margin-bottom: 20px; }
+  .streak-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .streak-count {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--gold);
+  }
+  .streak-count small {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text3);
+  }
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .calendar-day {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background: var(--bg4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--text3);
+    font-weight: 600;
+  }
+  .calendar-day.active {
+    background: var(--green2);
+    color: #fff;
+  }
+  .calendar-day.today {
+    border: 2px solid var(--accent2);
+  }
+  .calendar-day.todo {
+    background: var(--bg2);
+    border: 1px dashed var(--text3);
+  }
+
+  /* ═══ SKILL TREE ═══ */
+  .skill-tree {
+    display: grid;
+    gap: 10px;
+  }
+  .skill-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .skill-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .skill-icon.locked { background: var(--bg4); color: var(--text3); }
+  .skill-icon.unlocked { background: var(--bg4); }
+  .skill-info { flex: 1; }
+  .skill-info .name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .skill-info .name.locked { color: var(--text3); }
+  .skill-info .name.unlocked { color: var(--text); }
+  .skill-info .gate {
+    font-size: 10px;
+    color: var(--text3);
+  }
+  .skill-bar-outer {
+    height: 6px;
+    background: var(--bg4);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .skill-bar-inner {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.6s ease;
+  }
+  .skill-level {
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 24px;
+    text-align: center;
+  }
+  .skill-level.locked { color: var(--text3); }
+  .skill-level.unlocked { color: var(--accent2); }
+
+  /* ═══ SHADOW ARMY ═══ */
+  .army-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .soldier-card {
+    background: var(--bg2);
+    border: 1px solid var(--bg4);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .soldier-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .soldier-card .s-rank {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-weight: 900;
+    font-size: 13px;
+    opacity: 0.15;
+  }
+  .soldier-card .s-name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .soldier-card .s-concept {
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .soldier-card .s-gate {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 8px;
+  }
+  .soldier-card .s-expand {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--bg4);
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+  .soldier-card.expanded .s-expand { display: block; }
+
+  /* ═══ DAILY QUEST ═══ */
+  .quest-list {
+    display: grid;
+    gap: 8px;
+  }
+  .quest-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--bg4);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .quest-item:hover {
+    border-color: var(--bg4);
+    background: var(--bg3);
+  }
+  .quest-item.done {
+    opacity: 0.6;
+    border-color: var(--green2);
+  }
+  .quest-item.done .q-text {
+    text-decoration: line-through;
+    color: var(--text3);
+  }
+  .quest-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--text3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 11px;
+    transition: all 0.2s;
+  }
+  .quest-item.done .quest-check {
+    background: var(--green2);
+    border-color: var(--green2);
+    color: #fff;
+  }
+  .q-text { flex: 1; font-size: 13px; }
+  .q-xp {
+    font-size: 11px;
+    color: var(--accent2);
+    font-weight: 600;
+  }
+
+  /* ═══ GATE MAP ═══ */
+  .gate-map {
+    display: grid;
+    gap: 10px;
+  }
+  .gate-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--bg4);
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+  .gate-row.completed {
+    border-color: var(--green2);
+    background: rgba(34, 197, 94, 0.05);
+  }
+  .gate-row.active {
+    border-color: var(--accent2);
+    background: rgba(124, 58, 237, 0.08);
+  }
+  .gate-row.locked {
+    opacity: 0.4;
+  }
+  .gate-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .gate-num.completed { background: var(--green2); color: #fff; }
+  .gate-num.active { background: var(--accent); color: #fff; }
+  .gate-num.locked { background: var(--bg4); color: var(--text3); }
+  .gate-info { flex: 1; }
+  .gate-info .g-name {
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .gate-info .g-sub {
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .gate-status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+  .gate-status.completed { background: rgba(34,197,94,0.15); color: var(--green); }
+  .gate-status.active { background: rgba(124,58,237,0.15); color: var(--accent2); }
+  .gate-status.locked { background: rgba(148,163,184,0.1); color: var(--text3); }
+
+  /* ═══ SYSTEM NOTIFICATION ═══ */
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--bg2);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 20px;
+    max-width: 360px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    transform: translateX(120%);
+    transition: transform 0.4s ease;
+    z-index: 1000;
+  }
+  .notification.show { transform: translateX(0); }
+  .notification .n-title {
+    font-weight: 700;
+    color: var(--accent2);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .notification .n-body {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+
+  /* ═══ BUTTONS ═══ */
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(124,58,237,0.3);
+  }
+  .btn-secondary {
+    background: var(--bg4);
+    color: var(--text);
+  }
+  .btn-secondary:hover {
+    background: var(--bg3);
+  }
+  .btn-danger {
+    background: var(--red2);
+    color: #fff;
+  }
+  .btn-danger:hover {
+    background: var(--red);
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* ═══ ADD SHADOW FORM ═══ */
+  .add-shadow-form {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .add-shadow-form input,
+  .add-shadow-form textarea,
+  .add-shadow-form select {
+    padding: 10px 14px;
+    background: var(--bg2);
+    border: 1px solid var(--bg4);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+  }
+  .add-shadow-form textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+  .add-shadow-form input:focus,
+  .add-shadow-form textarea:focus,
+  .add-shadow-form select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .add-shadow-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 640px) {
+    .header { flex-direction: column; align-items: flex-start; }
+    .header-stats { flex-wrap: wrap; gap: 12px; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    .army-grid { grid-template-columns: 1fr; }
+    .add-shadow-form .form-row { grid-template-columns: 1fr; }
+  }
+
+  /* ═══ SCROLLBAR ═══ */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* ═══ MISC ═══ */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text3);
+  }
+  .empty-state .big-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+  .empty-state p { font-size: 14px; line-height: 1.6; }
+
+  .rank-up-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+  }
+  .rank-up-overlay.show { display: flex; }
+  .rank-up-card {
+    background: linear-gradient(135deg, var(--bg2), #1a0a2e);
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    max-width: 420px;
+    animation: pulse-glow 1.5s ease infinite alternate;
+  }
+  @keyframes pulse-glow {
+    from { box-shadow: 0 0 20px rgba(245,158,11,0.2); }
+    to { box-shadow: 0 0 40px rgba(245,158,11,0.5); }
+  }
+  .rank-up-card .ru-title {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .rank-up-card .ru-ranks {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .rank-up-card .ru-detail {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .dopeline {
+    margin: 8px 0;
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .dopeline .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--bg4);
+  }
+  .dopeline .dot.filled { background: var(--accent2); }
+
+  /* ═══ MARKDOWN RENDERER ═══ */
+  .mission-md-content h1 { font-size: 22px; font-weight: 800; margin: 20px 0 12px; color: var(--text); }
+  .mission-md-content h2 { font-size: 18px; font-weight: 700; margin: 18px 0 10px; color: var(--text); }
+  .mission-md-content h3 { font-size: 16px; font-weight: 700; margin: 16px 0 8px; color: var(--text); }
+  .mission-md-content h4 { font-size: 14px; font-weight: 700; margin: 14px 0 6px; color: var(--accent2); }
+  .mission-md-content p { margin: 8px 0; line-height: 1.7; }
+  .mission-md-content strong { color: var(--text); font-weight: 700; }
+  .mission-md-content code {
+    background: var(--bg4); padding: 2px 6px; border-radius: 4px;
+    font-size: 13px; font-family: 'Fira Code', monospace;
+  }
+  .mission-md-content pre {
+    background: var(--bg2); border: 1px solid var(--bg4); border-radius: 8px;
+    padding: 16px; overflow-x: auto; margin: 12px 0;
+  }
+  .mission-md-content pre code {
+    background: none; padding: 0; font-size: 13px; line-height: 1.5;
+  }
+  .mission-md-content ul { margin: 8px 0; padding-left: 20px; }
+  .mission-md-content ul li { margin: 4px 0; list-style: disc; }
+  .mission-md-content ul li::marker { color: var(--accent2); }
+  .mission-md-content hr {
+    border: none; border-top: 1px solid var(--bg4); margin: 20px 0;
+  }
+  .mission-md-content blockquote {
+    border-left: 3px solid var(--accent); padding: 8px 16px;
+    margin: 12px 0; background: rgba(124,58,237,0.05);
+    border-radius: 0 8px 8px 0; color: var(--text2);
+  }
+  .mission-md-content blockquote strong { color: var(--accent2); }
+  .mission-md-content a { color: var(--accent2); text-decoration: none; font-weight: 600; }
+  .mission-md-content a:hover { text-decoration: underline; }
+  .mission-md-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .mission-md-content td, .mission-md-content th {
+    padding: 8px 12px; border: 1px solid var(--bg4); text-align: left;
+  }
+  .mission-md-content th { background: var(--bg2); color: var(--text); font-weight: 700; }
+  .mission-md-content td { color: var(--text2); }
+  .md-check { display: block; padding: 4px 0; font-size: 14px; color: var(--text2); cursor: default; }
+  .md-check input { margin-right: 8px; accent-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ═══ RANK UP OVERLAY ═══ -->
+<div class="rank-up-overlay" id="rankUpOverlay">
+  <div class="rank-up-card">
+    <div class="ru-title">⬆ RANK UP</div>
+    <div class="ru-ranks"><span id="ruOldRank"></span> → <span id="ruNewRank"></span></div>
+    <div class="ru-detail" id="ruDetail">All stats increased. New abilities unlocked.</div>
+    <button class="btn btn-primary" onclick="closeRankUp()">CONTINUE</button>
+  </div>
+</div>
+
+<!-- ═══ NOTIFICATION ═══ -->
+<div class="notification" id="notification">
+  <div class="n-title" id="notifTitle">[SYSTEM]</div>
+  <div class="n-body" id="notifBody">Notification</div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+  <div class="header-left">
+    <h1>⚜️ SOLO LEVELING</h1>
+    <span class="rank-badge" id="rankBadge">E-5</span>
+  </div>
+  <div class="header-stats">
+    <span>XP: <strong id="headerXp">0</strong></span>
+    <span>Streak: <strong id="headerStreak">0</strong>d</span>
+    <span>Army: <strong id="headerArmy">0</strong></span>
+  </div>
+</header>
+
+<!-- ═══ TABS ═══ -->
+<nav class="tabs" id="tabNav">
+  <button class="tab-btn active" data-tab="status">📊 Status</button>
+  <button class="tab-btn" data-tab="skills">⚔️ Skills</button>
+  <button class="tab-btn" data-tab="army">👻 Army</button>
+  <button class="tab-btn" data-tab="gates">🗺️ Gates</button>
+  <button class="tab-btn" data-tab="quest">📜 Daily Quest</button>
+  <button class="tab-btn" data-tab="missions">🗺️ Missions</button>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <!-- ═══════ TAB: STATUS ═══════ -->
+  <div class="tab-content active" id="tab-status">
+
+    <div class="card" id="startDateCard">
+      <h2>Journey Settings</h2>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:13px;color:var(--text2);">Start Date:</span>
+        <input type="date" id="startDateInput" style="
+          padding:8px 12px;background:var(--bg2);border:1px solid var(--bg4);
+          border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;
+        ">
+        <span id="currentDayDisplay" style="font-size:13px;color:var(--text2);"></span>
+        <button class="btn btn-secondary" onclick="setStartDate()" style="padding:8px 16px;">Set</button>
+      </div>
+    </div>
+
+    <div class="card xp-section">
+      <h2>Progression</h2>
+      <div class="xp-header">
+        <span class="label">XP to next rank</span>
+        <span class="value"><span id="xpCurrent">0</span> / <span id="xpNext">200</span></span>
+      </div>
+      <div class="xp-bar-outer">
+        <div class="xp-bar-inner" id="xpBar" style="width:0%"></div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="addXP(50)">+50 XP (Mission)</button>
+        <button class="btn btn-secondary" onclick="addXP(100)">+100 XP (Dungeon)</button>
+        <button class="btn btn-secondary" onclick="addXP(300)">+300 XP (Boss)</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Stats <small>⚔️ STR · 🧠 INT · 👁️ PER · 🛡️ END · 💨 AGI</small></h2>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card" data-stat="strength">
+          <div class="icon">⚔️</div>
+          <div class="name">Strength</div>
+          <div class="value" id="stat-strength">8</div>
+          <div class="bar-outer"><div class="bar-inner" id="bar-strength" style="width:8%;background:var(--gold)"></div></div>
+        </div>
+        <div class="stat-card" data-stat="intelligence">
+          <div class="icon">🧠</div>
+          <div class="name">Intelligence</div>
+          <div class="value" id="stat-intelligence">12</div>
+          <div class="bar-outer"><div class="bar-inner" id="bar-intelligence" style="width:12%;background:var(--blue)"></div></div>
+        </div>
+        <div class="stat-card" data-stat="perception">
+          <div class="icon">👁️</div>
+          <div class="name">Perception</div>
+          <div class="value" id="stat-perception">10</div>
+          <div class="bar-outer"><div class="bar-inner" id="bar-perception" style="width:10%;background:var(--cyan)"></div></div>
+        </div>
+        <div class="stat-card" data-stat="endurance">
+          <div class="icon">🛡️</div>
+          <div class="name">Endurance</div>
+          <div class="value" id="stat-endurance">10</div>
+          <div class="bar-outer"><div class="bar-inner" id="bar-endurance" style="width:10%;background:var(--green)"></div></div>
+        </div>
+        <div class="stat-card" data-stat="agility">
+          <div class="icon">💨</div>
+          <div class="name">Agility</div>
+          <div class="value" id="stat-agility">5</div>
+          <div class="bar-outer"><div class="bar-inner" id="bar-agility" style="width:5%;background:var(--accent2)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card streak-container">
+      <h2>Streak</h2>
+      <div class="streak-header">
+        <div class="streak-count"><span id="streakNum">0</span> <small>days</small></div>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+  </div>
+
+  <!-- ═══════ TAB: SKILLS ═══════ -->
+  <div class="tab-content" id="tab-skills">
+    <div class="card">
+      <h2>Skills <small>Each skill levels up with practice (max 10)</small></h2>
+      <div class="skill-tree" id="skillTree"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB: ARMY ═══════ -->
+  <div class="tab-content" id="tab-army">
+    <div class="card">
+      <h2>Shadow Army <small id="armyCount">0 soldiers</small></h2>
+      <div class="army-grid" id="armyGrid">
+        <div class="empty-state">
+          <div class="big-icon">👻</div>
+          <p>Your Shadow Army is empty.<br>Complete dungeons to extract shadows.</p>
+        </div>
+      </div>
+
+      <h2 style="margin-top:24px;">Extract New Shadow</h2>
+      <div class="add-shadow-form" id="addShadowForm">
+        <input type="text" id="shadowName" placeholder="Shadow name (e.g., Tokenization)">
+        <div class="form-row">
+          <select id="shadowRank">
+            <option value="E">E-Rank</option>
+            <option value="D">D-Rank</option>
+            <option value="C">C-Rank</option>
+            <option value="B" selected>B-Rank</option>
+            <option value="A">A-Rank</option>
+            <option value="S">S-Rank</option>
+          </select>
+          <input type="number" id="shadowGate" placeholder="Gate #" min="0" max="11">
+        </div>
+        <textarea id="shadowExplanation" placeholder="Write the concept in your own words (Shadow Extraction)..."></textarea>
+        <button class="btn btn-primary" onclick="addShadow()">⬆ Extract Shadow</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB: GATES ═══════ -->
+  <div class="tab-content" id="tab-gates">
+    <div class="card">
+      <h2>Gate Map</h2>
+      <div class="gate-map" id="gateMap"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB: MISSIONS ═══════ -->
+  <div class="tab-content" id="tab-missions">
+    <div class="card">
+      <h2>Today's Mission <small id="missionDayLabel">Day 1</small></h2>
+      <div id="missionContent">
+        <div class="empty-state">
+          <div class="big-icon">⚜️</div>
+          <p>Loading mission data...</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Gate Progress</h2>
+      <div id="gateProgressList"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB: DAILY QUEST ═══════ -->
+  <div class="tab-content" id="tab-quest">
+    <div class="card">
+      <h2>Daily Quest — <span id="questDate">Today</span></h2>
+      <div class="quest-list" id="questList">
+        <div class="quest-item" data-quest="shadowExtraction" onclick="toggleQuest('shadowExtraction')">
+          <div class="quest-check">✓</div>
+          <span class="q-text">Shadow Extraction — Write yesterday's concept in your own words</span>
+          <span class="q-xp">+30 XP</span>
+        </div>
+        <div class="quest-item" data-quest="summonShadows" onclick="toggleQuest('summonShadows')">
+          <div class="quest-check">✓</div>
+          <span class="q-text">Summon Shadows — Review 2 previous extractions</span>
+          <span class="q-xp">+20 XP</span>
+        </div>
+        <div class="quest-item" data-quest="dungeonBriefing" onclick="toggleQuest('dungeonBriefing')">
+          <div class="quest-check">✓</div>
+          <span class="q-text">Dungeon Briefing — Read today's mission</span>
+          <span class="q-xp">+10 XP</span>
+        </div>
+        <div class="quest-item" data-quest="predictionDone" onclick="toggleQuest('predictionDone')">
+          <div class="quest-check">✓</div>
+          <span class="q-text">Prediction — Wrote what I expected before running code</span>
+          <span class="q-xp">+20 XP</span>
+        </div>
+        <div class="quest-item" data-quest="codeCompleted" onclick="toggleQuest('codeCompleted')">
+          <div class="quest-check">✓</div>
+          <span class="q-text">Code Completed — Typed every line (no copy-paste)</span>
+          <span class="q-xp">+50 XP</span>
+        </div>
+        <div class="quest-item" data-quest="twistCompleted" onclick="toggleQuest('twistCompleted')">
+          <div class="quest-check">✓</div>
+          <span class="q-text">The Twist — Completed the harder variant</span>
+          <span class="q-xp">+50 XP</span>
+        </div>
+        <div class="quest-item" data-quest="brokeAndFixed" onclick="toggleQuest('brokeAndFixed')">
+          <div class="quest-check">✓</div>
+          <span class="q-text">Break & Fix — Intentionally broke and fixed my code</span>
+          <span class="q-xp">+30 XP</span>
+        </div>
+        <div class="quest-item" data-quest="gateCheckPassed" onclick="toggleQuest('gateCheckPassed')">
+          <div class="quest-check">✓</div>
+          <span class="q-text">Gate Check — All checks passed</span>
+          <span class="q-xp">+50 XP</span>
+        </div>
+        <div class="quest-item" data-quest="trackerUpdated" onclick="toggleQuest('trackerUpdated')">
+          <div class="quest-check">✓</div>
+          <span class="q-text">Tracker Updated — Logged today's progress</span>
+          <span class="q-xp">+10 XP</span>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:16px;background:var(--bg2);border-radius:8px;border:1px solid var(--bg4);">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;">Today's Progress</div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;">
+          <span style="color:var(--text2);">Completed: <strong id="questProgress">0/9</strong></span>
+          <span style="color:var(--accent2);">Potential XP Today: <strong id="questPotentialXp">270</strong></span>
+        </div>
+        <div class="xp-bar-outer" style="margin-top:8px;">
+          <div class="xp-bar-inner" id="questBar" style="width:0%;background:linear-gradient(90deg,var(--green2),var(--green))"></div>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="completeDailyQuest()">✅ Complete Daily Quest</button>
+        <button class="btn btn-secondary" onclick="resetDailyQuest()">↻ Reset</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   SOLO LEVELING TRACKER — JavaScript Engine
+   ═══════════════════════════════════════════ */
+
+// ─── DATA ───
+const RANKS = [
+  { id: 'E-5', label: 'E-5', nextXp: 200, cssClass: 'e', index: 0 },
+  { id: 'E-4', label: 'E-4', nextXp: 200, cssClass: 'e', index: 1 },
+  { id: 'E-3', label: 'E-3', nextXp: 200, cssClass: 'e', index: 2 },
+  { id: 'E-2', label: 'E-2', nextXp: 200, cssClass: 'e', index: 3 },
+  { id: 'E-1', label: 'E-1', nextXp: 200, cssClass: 'e', index: 4 },
+  { id: 'D-5', label: 'D-5', nextXp: 400, cssClass: 'd', index: 5 },
+  { id: 'D-4', label: 'D-4', nextXp: 400, cssClass: 'd', index: 6 },
+  { id: 'D-3', label: 'D-3', nextXp: 400, cssClass: 'd', index: 7 },
+  { id: 'D-2', label: 'D-2', nextXp: 400, cssClass: 'd', index: 8 },
+  { id: 'D-1', label: 'D-1', nextXp: 400, cssClass: 'd', index: 9 },
+  { id: 'C-5', label: 'C-5', nextXp: 600, cssClass: 'c', index: 10 },
+  { id: 'C-4', label: 'C-4', nextXp: 600, cssClass: 'c', index: 11 },
+  { id: 'C-3', label: 'C-3', nextXp: 600, cssClass: 'c', index: 12 },
+  { id: 'C-2', label: 'C-2', nextXp: 600, cssClass: 'c', index: 13 },
+  { id: 'C-1', label: 'C-1', nextXp: 600, cssClass: 'c', index: 14 },
+  { id: 'B-5', label: 'B-5', nextXp: 800, cssClass: 'b', index: 15 },
+  { id: 'B-4', label: 'B-4', nextXp: 800, cssClass: 'b', index: 16 },
+  { id: 'B-3', label: 'B-3', nextXp: 800, cssClass: 'b', index: 17 },
+  { id: 'B-2', label: 'B-2', nextXp: 800, cssClass: 'b', index: 18 },
+  { id: 'B-1', label: 'B-1', nextXp: 800, cssClass: 'b', index: 19 },
+  { id: 'A-5', label: 'A-5', nextXp: 1000, cssClass: 'a', index: 20 },
+  { id: 'A-4', label: 'A-4', nextXp: 1000, cssClass: 'a', index: 21 },
+  { id: 'A-3', label: 'A-3', nextXp: 1000, cssClass: 'a', index: 22 },
+  { id: 'A-2', label: 'A-2', nextXp: 1000, cssClass: 'a', index: 23 },
+  { id: 'A-1', label: 'A-1', nextXp: 1000, cssClass: 'a', index: 24 },
+  { id: 'S-5', label: 'S-5', nextXp: 1200, cssClass: 's', index: 25 },
+  { id: 'S-4', label: 'S-4', nextXp: 1200, cssClass: 's', index: 26 },
+  { id: 'S-3', label: 'S-3', nextXp: 1200, cssClass: 's', index: 27 },
+  { id: 'S-2', label: 'S-2', nextXp: 1200, cssClass: 's', index: 28 },
+  { id: 'S-1', label: 'S-1', nextXp: 1200, cssClass: 's', index: 29 },
+  { id: 'NL-5', label: 'NL-5', nextXp: 1400, cssClass: 'nl', index: 30 },
+  { id: 'NL-4', label: 'NL-4', nextXp: 1400, cssClass: 'nl', index: 31 },
+  { id: 'NL-3', label: 'NL-3', nextXp: 1400, cssClass: 'nl', index: 32 },
+  { id: 'NL-2', label: 'NL-2', nextXp: 1400, cssClass: 'nl', index: 33 },
+  { id: 'NL-1', label: 'NL-1', nextXp: 1400, cssClass: 'nl', index: 34 },
+  { id: '⚜️ Monarch', label: '⚜️ Monarch', nextXp: Infinity, cssClass: 'sm', index: 35 },
+];
+
+const SKILLS_DATA = [
+  { id: 'llmStrike', name: 'LLM Strike', icon: '⚡', gate: 1, color: '#f59e0b' },
+  { id: 'tokenSense', name: 'Token Sense', icon: '🔤', gate: 1, color: '#3b82f6' },
+  { id: 'promptWeaver', name: 'Prompt Weaver', icon: '📜', gate: 2, color: '#a855f7' },
+  { id: 'embeddingArrow', name: 'Embedding Arrow', icon: '🏹', gate: 3, color: '#06b6d4' },
+  { id: 'ragBarrier', name: 'RAG Barrier', icon: '🛡️', gate: 4, color: '#22c55e' },
+  { id: 'hydePierce', name: 'HyDE Pierce', icon: '🗡️', gate: 5, color: '#ec4899' },
+  { id: 'agentDominion', name: 'Agent Dominion', icon: '👑', gate: 6, color: '#f97316' },
+  { id: 'evalEye', name: 'Eval Eye', icon: '👁️', gate: 7, color: '#14b8a6' },
+  { id: 'guardianShield', name: 'Guardian Shield', icon: '🔰', gate: 8, color: '#6366f1' },
+  { id: 'sculptorsTouch', name: "Sculptor's Touch", icon: '🔨', gate: 9, color: '#d946ef' },
+  { id: 'architectsDomain', name: "Architect's Domain", icon: '🏰', gate: 10, color: '#eab308' },
+  { id: 'monarchsAuthority', name: "Monarch's Authority", icon: '⚜️', gate: 11, color: '#fbbf24' },
+];
+
+const GATES_DATA = [
+  { id: 0, name: 'The Awakening', sub: 'Engineering Mindset', theme: 'The Double Dungeon' },
+  { id: 1, name: 'The First Gate', sub: 'LLM Foundations & Gateway', theme: 'Arise, Jinwoo' },
+  { id: 2, name: "The Wordsmith's Domain", sub: 'Prompt Engineering', theme: 'Crafting Skills' },
+  { id: 3, name: 'The Compass Tower', sub: 'Embeddings & Vector DBs', theme: 'The Tower of Trials' },
+  { id: 4, name: 'The Archive', sub: 'RAG Foundations', theme: 'Searching for Answers' },
+  { id: 5, name: "The Sage's Sanctum", sub: 'Advanced RAG', theme: "The Demon's Castle" },
+  { id: 6, name: "The Conductor's Hall", sub: 'AI Agents', theme: 'Raising an Army' },
+  { id: 7, name: "The Judge's Court", sub: 'Production Evals', theme: "The System's Judgment" },
+  { id: 8, name: 'The Shield Fortress', sub: 'Guardrails & Safety', theme: 'The Defense Wall' },
+  { id: 9, name: "The Sculptor's Forge", sub: 'Fine-Tuning & LLMOps', theme: 'Crafting the Blade' },
+  { id: 10, name: "The Architect's Spire", sub: 'Deployment & Scale', theme: "The Architect's Domain" },
+  { id: 11, name: "The Monarch's Throne", sub: 'Capstone', theme: 'Becoming the Shadow Monarch' },
+];
+
+const QUEST_IDS = ['shadowExtraction','summonShadows','dungeonBriefing','predictionDone','codeCompleted','twistCompleted','brokeAndFixed','gateCheckPassed','trackerUpdated'];
+const QUEST_XP = { shadowExtraction:30, summonShadows:20, dungeonBriefing:10, predictionDone:20, codeCompleted:50, twistCompleted:50, brokeAndFixed:30, gateCheckPassed:50, trackerUpdated:10 };
+
+// ─── STATE ───
+let state = {
+  rankIndex: 0,
+  xp: 0,
+  totalXp: 0,
+  streak: 0,
+  lastActiveDate: null,
+  completedDates: [],
+  startDate: null,
+  stats: { strength:8, intelligence:12, perception:10, endurance:10, agility:5 },
+  skills: {},
+  shadowArmy: [],
+  gates: {},
+  dailyQuest: {},
+  firstVisit: true
+};
+
+function getDefaultState() {
+  const s = {
+    rankIndex: 0,
+    xp: 0,
+    totalXp: 0,
+    streak: 0,
+    lastActiveDate: null,
+    completedDates: [],
+    startDate: null,
+    stats: { strength:8, intelligence:12, perception:10, endurance:10, agility:5 },
+    skills: {},
+    shadowArmy: [],
+    gates: {},
+    dailyQuest: {},
+    firstVisit: false
+  };
+  SKILLS_DATA.forEach(sk => s.skills[sk.id] = 0);
+  GATES_DATA.forEach(g => s.gates[g.id] = g.id === 0 ? 'active' : 'locked');
+  s.dailyQuest = getEmptyQuest();
+  return s;
+}
+
+function getEmptyQuest() {
+  const q = {};
+  QUEST_IDS.forEach(id => q[id] = false);
+  return q;
+}
+
+// ─── PERSISTENCE ───
+function saveState() {
+  try {
+    localStorage.setItem('slTracker_v2', JSON.stringify(state));
+  } catch(e) { console.warn('Save failed', e); }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('slTracker_v2');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Ensure all keys exist
+      state = { ...getDefaultState(), ...parsed };
+      state.skills = { ...getDefaultState().skills, ...(parsed.skills||{}) };
+      state.gates = { ...getDefaultState().gates, ...(parsed.gates||{}) };
+      state.dailyQuest = { ...getEmptyQuest(), ...(parsed.dailyQuest||{}) };
+      state.stats = { ...getDefaultState().stats, ...(parsed.stats||{}) };
+      state.completedDates = state.completedDates || [];
+      state.firstVisit = false;
+      return true;
+    }
+  } catch(e) { console.warn('Load failed', e); }
+  return false;
+}
+
+// ─── RANK CALC ───
+function getRank(idx) { return RANKS[Math.min(idx, RANKS.length-1)]; }
+function getRankIndex() { return state.rankIndex; }
+function getNextRankXp() { return getRank(state.rankIndex).nextXp; }
+function getXpForNext() { return getNextRankXp(); }
+
+// ─── START DATE ───
+function setStartDate() {
+  const input = document.getElementById('startDateInput');
+  if (!input.value) {
+    showNotification('[SYSTEM]', 'Please select a date.');
+    return;
+  }
+  state.startDate = input.value;
+  saveState();
+  renderAll();
+  showNotification('📅 Start Date Set', `Day 1 begins on ${input.value}.`);
+}
+
+function updateStartDateUI() {
+  const input = document.getElementById('startDateInput');
+  const display = document.getElementById('currentDayDisplay');
+  if (!input || !display) return;
+  
+  if (state.startDate) {
+    input.value = state.startDate;
+    const day = getCourseDay();
+    display.textContent = `→ Day ${day}`;
+  } else {
+    display.textContent = '→ Not set';
+  }
+}
+
+// ─── NOTIFICATION ───
+function showNotification(title, body) {
+  document.getElementById('notifTitle').textContent = title;
+  document.getElementById('notifBody').textContent = body;
+  const el = document.getElementById('notification');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// ─── XP ───
+function addXP(amount, source) {
+  state.xp += amount;
+  state.totalXp += amount;
+  
+  // Check rank up
+  let rankedUp = false;
+  while (state.rankIndex < RANKS.length - 1 && state.xp >= getRank(state.rankIndex).nextXp) {
+    state.xp -= getRank(state.rankIndex).nextXp;
+    state.rankIndex++;
+    rankedUp = true;
+  }
+  
+  saveState();
+  renderAll();
+  
+  if (rankedUp) {
+    const rank = getRank(state.rankIndex);
+    showNotification(`⬆ RANK UP — ${rank.label}`, `You've ascended. All stats increased.`);
+    showRankUp(rank.label);
+  } else {
+    showNotification(`+${amount} XP`, source || 'Mission completed.');
+  }
+}
+
+function showRankUp(newRank) {
+  const oldRank = getRank(state.rankIndex > 0 ? state.rankIndex - 1 : 0).label;
+  document.getElementById('ruOldRank').textContent = oldRank;
+  document.getElementById('ruNewRank').textContent = newRank;
+  document.getElementById('rankUpOverlay').classList.add('show');
+}
+function closeRankUp() {
+  document.getElementById('rankUpOverlay').classList.remove('show');
+  // Stat bonus on rank up
+  Object.keys(state.stats).forEach(k => state.stats[k] = Math.min(100, state.stats[k] + 5));
+  saveState();
+  renderAll();
+}
+
+// ─── STREAK ───
+function updateStreak() {
+  const today = new Date().toISOString().split('T')[0];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  
+  if (state.lastActiveDate === today) return; // already checked in today
+  
+  if (state.lastActiveDate === yesterday) {
+    state.streak++;
+  } else if (state.lastActiveDate && state.lastActiveDate !== today) {
+    state.streak = 1; // reset, but give 1 for today
+  } else {
+    state.streak = Math.max(state.streak, 1);
+  }
+  
+  state.lastActiveDate = today;
+  
+  // Track in history
+  if (!state.completedDates) state.completedDates = [];
+  if (!state.completedDates.includes(today)) {
+    state.completedDates.push(today);
+  }
+  
+  saveState();
+}
+
+// ─── SHADOW ARMY ───
+function addShadow() {
+  const name = document.getElementById('shadowName').value.trim();
+  const rank = document.getElementById('shadowRank').value;
+  const gate = parseInt(document.getElementById('shadowGate').value) || 0;
+  const explanation = document.getElementById('shadowExplanation').value.trim();
+  
+  if (!name || !explanation) {
+    showNotification('[SYSTEM]', 'A shadow needs both a name and an explanation.');
+    return;
+  }
+  
+  state.shadowArmy.push({
+    id: Date.now(),
+    name,
+    rank,
+    gate,
+    explanation,
+    date: new Date().toISOString().split('T')[0]
+  });
+  
+  document.getElementById('shadowName').value = '';
+  document.getElementById('shadowExplanation').value = '';
+  document.getElementById('shadowGate').value = '';
+  
+  saveState();
+  renderAll();
+  showNotification('👻 Shadow Extracted', `${name} has joined your army.`);
+}
+
+function toggleShadowExpand(id) {
+  const card = document.querySelector(`[data-shadow-id="${id}"]`);
+  if (card) card.classList.toggle('expanded');
+}
+
+// ─── DAILY QUEST ───
+function toggleQuest(id) {
+  state.dailyQuest[id] = !state.dailyQuest[id];
+  saveState();
+  renderAll();
+}
+
+function completeDailyQuest() {
+  const completed = QUEST_IDS.filter(id => state.dailyQuest[id]).length;
+  if (completed === 0) {
+    showNotification('[SYSTEM]', 'Complete at least one task to register progress.');
+    return;
+  }
+  
+  const earned = QUEST_IDS.filter(id => state.dailyQuest[id]).reduce((sum, id) => sum + QUEST_XP[id], 0);
+  addXP(earned, 'Daily Quest completed');
+  updateStreak();
+  showNotification('📜 Daily Quest Complete', `+${earned} XP | Streak: ${state.streak} days`);
+}
+
+function resetDailyQuest() {
+  state.dailyQuest = getEmptyQuest();
+  saveState();
+  renderAll();
+}
+
+// ─── RENDER ───
+function renderAll() {
+  renderHeader();
+  renderXpBar();
+  renderStats();
+  renderStreak();
+  renderSkills();
+  renderArmy();
+  renderGates();
+  renderQuest();
+  updateStartDateUI();
+  renderMissions();
+}
+
+function renderHeader() {
+  const rank = getRank(state.rankIndex);
+  const badge = document.getElementById('rankBadge');
+  badge.textContent = rank.label;
+  badge.className = `rank-badge ${rank.cssClass}`;
+  
+  document.getElementById('headerXp').textContent = state.totalXp;
+  document.getElementById('headerStreak').textContent = state.streak || 0;
+  document.getElementById('headerArmy').textContent = state.shadowArmy.length;
+}
+
+function renderXpBar() {
+  document.getElementById('xpCurrent').textContent = state.xp;
+  const nextXp = getXpForNext();
+  document.getElementById('xpNext').textContent = nextXp === Infinity ? 'MAX' : nextXp;
+  const pct = nextXp === Infinity ? 100 : Math.min(100, (state.xp / nextXp) * 100);
+  document.getElementById('xpBar').style.width = pct + '%';
+}
+
+function renderStats() {
+  const totalStats = Object.values(state.stats).reduce((a,b) => a+b, 0);
+  Object.entries(state.stats).forEach(([key, val]) => {
+    document.getElementById(`stat-${key}`).textContent = val;
+    document.getElementById(`bar-${key}`).style.width = Math.min(100, val) + '%';
+  });
+}
+
+function renderStreak() {
+  document.getElementById('streakNum').textContent = state.streak || 0;
+  
+  const grid = document.getElementById('calendarGrid');
+  grid.innerHTML = '';
+  
+  const today = new Date();
+  const days = [];
+  for (let i = 34; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    days.push(d);
+  }
+  
+  days.forEach(d => {
+    const dateStr = d.toISOString().split('T')[0];
+    const dayEl = document.createElement('div');
+    dayEl.className = 'calendar-day';
+    
+    if (state.completedDates && state.completedDates.includes(dateStr)) {
+      dayEl.classList.add('active');
+    }
+    
+    const todayStr = today.toISOString().split('T')[0];
+    if (dateStr === todayStr) {
+      dayEl.classList.add('today');
+    }
+    
+    dayEl.textContent = d.getDate();
+    grid.appendChild(dayEl);
+  });
+}
+
+function renderSkills() {
+  const tree = document.getElementById('skillTree');
+  tree.innerHTML = '';
+  
+  SKILLS_DATA.forEach(sk => {
+    const level = state.skills[sk.id] || 0;
+    const unlocked = state.gates[sk.gate] === 'completed' || state.gates[sk.gate] === 'active';
+    
+    const row = document.createElement('div');
+    row.className = 'skill-row';
+    
+    const icon = document.createElement('div');
+    icon.className = `skill-icon ${unlocked ? 'unlocked' : 'locked'}`;
+    icon.style.border = unlocked ? `1px solid ${sk.color}` : 'none';
+    icon.textContent = sk.icon;
+    
+    const info = document.createElement('div');
+    info.className = 'skill-info';
+    info.innerHTML = `
+      <div class="name ${unlocked ? 'unlocked' : 'locked'}">${sk.name}</div>
+      <div class="gate">Gate ${sk.gate}</div>
+      <div class="skill-bar-outer">
+        <div class="skill-bar-inner" style="width:${level*10}%;background:${unlocked ? sk.color : 'var(--text3)'}"></div>
+      </div>
+    `;
+    
+    const lvl = document.createElement('div');
+    lvl.className = `skill-level ${unlocked ? 'unlocked' : 'locked'}`;
+    lvl.textContent = unlocked ? `${level}/10` : '🔒';
+    
+    row.appendChild(icon);
+    row.appendChild(info);
+    row.appendChild(lvl);
+    tree.appendChild(row);
+  });
+}
+
+function renderArmy() {
+  const grid = document.getElementById('armyGrid');
+  grid.innerHTML = '';
+  document.getElementById('armyCount').textContent = `${state.shadowArmy.length} soldiers`;
+  
+  if (state.shadowArmy.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><div class="big-icon">👻</div><p>Your Shadow Army is empty.<br>Complete dungeons to extract shadows.</p></div>`;
+    return;
+  }
+  
+  state.shadowArmy.slice().reverse().forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'soldier-card';
+    card.dataset.shadowId = s.id;
+    card.onclick = () => toggleShadowExpand(s.id);
+    
+    card.innerHTML = `
+      <div class="s-rank" style="color:var(--rank-${s.rank.toLowerCase()})">${s.rank}-Rank</div>
+      <div class="s-name">👻 ${s.name}</div>
+      <div class="s-concept">Gate ${s.gate}</div>
+      <div class="s-gate">Extracted: ${s.date}</div>
+      <div class="s-expand">${s.explanation}</div>
+    `;
+    
+    grid.appendChild(card);
+  });
+}
+
+function renderGates() {
+  const map = document.getElementById('gateMap');
+  map.innerHTML = '';
+  
+  GATES_DATA.forEach(g => {
+    const status = state.gates[g.id] || 'locked';
+    const row = document.createElement('div');
+    row.className = `gate-row ${status}`;
+    
+    const num = document.createElement('div');
+    num.className = `gate-num ${status}`;
+    num.textContent = status === 'completed' ? '✓' : g.id;
+    
+    const info = document.createElement('div');
+    info.className = 'gate-info';
+    info.innerHTML = `
+      <div class="g-name">Gate ${g.id}: ${g.name}</div>
+      <div class="g-sub">${g.sub} · ${g.theme}</div>
+    `;
+    
+    const statusBadge = document.createElement('div');
+    statusBadge.className = `gate-status ${status}`;
+    statusBadge.textContent = status === 'completed' ? '✅ CLEARED' : status === 'active' ? '⚔️ IN PROGRESS' : '🔒 LOCKED';
+    
+    row.appendChild(num);
+    row.appendChild(info);
+    row.appendChild(statusBadge);
+    map.appendChild(row);
+  });
+}
+
+// ─── MARKDOWN RENDERER ───
+function renderMarkdown(md) {
+  if (!md) return '<div class="empty-state"><div class="big-icon">⚜️</div><p>No mission data loaded yet.</p></div>';
+  
+  // Escape HTML entities first
+  let html = md
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  
+  // Code blocks (must happen before other inline rules)
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+    return `<pre><code>${code.trim()}</code></pre>`;
+  });
+  
+  // Single-line code starts with backtick or `  ` indented
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  
+  // Headings
+  html = html.replace(/^###### (.*$)/gm, '<h6>$1</h6>');
+  html = html.replace(/^##### (.*$)/gm, '<h5>$1</h5>');
+  html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
+  html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+  
+  // Bold and italic
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  
+  // Horizontal rules
+  html = html.replace(/^---$/gm, '<hr>');
+  html = html.replace(/^___$/gm, '<hr>');
+  
+  // Blockquotes
+  html = html.replace(/^&gt; (.*$)/gm, '<blockquote>$1</blockquote>');
+  html = html.replace(/^&gt;(.*$)/gm, '<blockquote>$1</blockquote>');
+  
+  // Checkbox lists
+  html = html.replace(/^- \[ \] (.*$)/gm, '<label class="md-check"><input type="checkbox" disabled> $1</label>');
+  html = html.replace(/^- \[x\] (.*$)/gm, '<label class="md-check"><input type="checkbox" disabled checked> $1</label>');
+  
+  // Unordered lists
+  html = html.replace(/^- (.*$)/gm, '<li>$1</li>');
+  
+  // Ordered lists
+  html = html.replace(/^\d+\. (.*$)/gm, '<li>$1</li>');
+  
+  // Wrap consecutive list items
+  html = html.replace(/((?:<li>.*?<\/li>\n?)+)/g, (match) => {
+    if (match.includes('<label')) return match;
+    return `<ul>${match}</ul>`;
+  });
+  
+  // Table: simple pipe table support
+  html = html.replace(/^\|(.+)\|$/gm, (match, content) => {
+    const cells = content.split('|').map(c => c.trim());
+    // Check if it's a separator row
+    if (cells.every(c => /^[-:]+$/.test(c.replace(/\s/g, '')))) return '<tr class="sep">';
+    return `<td>${cells.join('</td><td>')}</td>`;
+  });
+  
+  // Links
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  
+  // Line breaks
+  html = html.replace(/\n\n/g, '</p><p>');
+  html = html.replace(/\n/g, '<br>');
+  
+  // Wrap in paragraph if not already wrapped
+  if (!html.startsWith('<h') && !html.startsWith('<pre') && !html.startsWith('<ul') && !html.startsWith('<blockquote')) {
+    html = '<p>' + html + '</p>';
+  }
+  
+  return html;
+}
+
+// ─── GATE SCHEDULE (days per gate) ───
+const GATE_SCHEDULE = [
+  { gate: 0, dungeons: 6, bossDays: 1, totalDays: 5,  name: 'The Awakening',       rankReq: 'E-5' },
+  { gate: 1, dungeons: 7, bossDays: 6, totalDays: 16, name: 'The First Gate',       rankReq: 'E-5' },
+  { gate: 2, dungeons: 8, bossDays: 6, totalDays: 16, name: "The Wordsmith's Domain", rankReq: 'D-5' },
+  { gate: 3, dungeons: 7, bossDays: 6, totalDays: 15, name: 'The Compass Tower',    rankReq: 'C-5' },
+  { gate: 4, dungeons: 7, bossDays: 6, totalDays: 17, name: 'The Archive',          rankReq: 'C-3' },
+  { gate: 5, dungeons: 7, bossDays: 6, totalDays: 17, name: "The Sage's Sanctum",   rankReq: 'B-5' },
+  { gate: 6, dungeons: 8, bossDays: 7, totalDays: 19, name: "The Conductor's Hall", rankReq: 'B-3' },
+  { gate: 7, dungeons: 8, bossDays: 6, totalDays: 16, name: "The Judge's Court",    rankReq: 'B-1' },
+  { gate: 8, dungeons: 7, bossDays: 6, totalDays: 16, name: 'The Shield Fortress',  rankReq: 'A-5' },
+  { gate: 9, dungeons: 7, bossDays: 7, totalDays: 17, name: "The Sculptor's Forge", rankReq: 'A-3' },
+  { gate: 10, dungeons: 7, bossDays: 7, totalDays: 17, name: "The Architect's Spire", rankReq: 'S-5' },
+  { gate: 11, dungeons: 4, bossDays: 10, totalDays: 26, name: "The Monarch's Throne", rankReq: 'NL-5' },
+];
+
+// ─── GATE CONTENT ───
+// Each gate has dungeons. Each dungeon has: title, xp, stats, estTime, content (markdown)
+// Content is the full mission description shown in the Missions tab
+// We load from the actual gate files and embed as template literals
+const GATE_DUNGEONS = [
+  // GATE 0: The Awakening — dungeons
+  [
+    { title: 'Senior vs Junior Mindset', xp: 100, stats: '🧠 INT +3', est: '1 sprint (90m)' },
+    { title: 'Production vs Academic', xp: 100, stats: '🧠 INT +3 | 👁️ PER +2', est: '1 sprint (90m)' },
+    { title: 'The Evaluation-First Philosophy', xp: 100, stats: '🧠 INT +3 | 👁️ PER +3', est: '1 sprint (90m)' },
+    { title: 'The Decision Framework', xp: 100, stats: '🧠 INT +4', est: '1 sprint (90m)' },
+    { title: 'Cost Awareness', xp: 100, stats: '🧠 INT +2 | 🛡️ END +3', est: '1 sprint (90m)' },
+    { title: 'The Build Loop', xp: 100, stats: '🧠 INT +2 | 🛡️ END +3 | 💨 AGI +2', est: '1 sprint (90m)' },
+    { title: 'BOSS: The Awakening Gate Check', xp: 200, stats: 'ALL STATS +2', est: '1 sprint (45m)' },
+  ],
+  // GATE 1: The First Gate
+  [
+    { title: 'The Black Box Unlocked', xp: 100, stats: '🧠 INT +4', est: '1 sprint (90m)' },
+    { title: 'The Token Conspiracy', xp: 200, stats: '🧠 INT +4 | 💨 AGI +3', est: '2 sprints (1 day)' },
+    { title: 'Mastering the Context Window', xp: 150, stats: '🧠 INT +3 | 👁️ PER +3', est: '1 sprint (90m)' },
+    { title: 'Structured Outputs', xp: 200, stats: '⚔️ STR +4 | 🧠 INT +3', est: '2 sprints (1 day)' },
+    { title: 'AI Integration Patterns', xp: 200, stats: '⚔️ STR +4 | 💨 AGI +3', est: '2 sprints (1 day)' },
+    { title: 'The Streaming Revelation', xp: 200, stats: '💨 AGI +5 | 👁️ PER +3', est: '2 sprints (1 day)' },
+    { title: 'The Framework Landscape', xp: 100, stats: '🧠 INT +4 | 👁️ PER +2', est: '1 sprint (90m)' },
+    { title: 'BOSS: The LLM Gateway', xp: 500, stats: '⚔️ STR +8 | 🧠 INT +4 | 🛡️ END +6', est: '6 days' },
+  ],
+  // GATE 2: Wordsmith — 8 dungeons + boss
+  [
+    { title: 'Context Engineering', xp: 100, stats: '🧠 INT +4', est: '1 sprint (90m)' },
+    { title: 'Prompt Techniques', xp: 200, stats: '🧠 INT +4 | ⚔️ STR +3', est: '2 sprints (1 day)' },
+    { title: 'System Prompts & Personas', xp: 200, stats: '🧠 INT +3 | 👁️ PER +3', est: '2 sprints (1 day)' },
+    { title: 'Advanced Techniques', xp: 200, stats: '💨 AGI +4 | 🧠 INT +3', est: '2 sprints (1 day)' },
+    { title: 'Red Teaming', xp: 150, stats: '👁️ PER +5', est: '1 sprint (90m)' },
+    { title: 'Prompt Evaluation', xp: 200, stats: '👁️ PER +4 | 🧠 INT +3', est: '2 sprints (1 day)' },
+    { title: 'DSPy Optimization', xp: 250, stats: '⚔️ STR +4 | 🧠 INT +4', est: '2 sprints (1 day)' },
+    { title: 'Production Prompt Mgmt', xp: 100, stats: '🛡️ END +3', est: '1 sprint (90m)' },
+    { title: 'BOSS: Prompt Engineering System', xp: 500, stats: '⚔️ STR +6 | 🧠 INT +8 | 🛡️ END +4', est: '6 days' },
+  ],
+  // GATE 3: Compass Tower — 7 dungeons + boss
+  [
+    { title: 'Embedding Intuition', xp: 100, stats: '🧠 INT +4', est: '1 sprint (90m)' },
+    { title: 'Semantic Search from Scratch', xp: 200, stats: '⚔️ STR +5 | 🧠 INT +3', est: '2 sprints (1 day)' },
+    { title: 'Embedding Model Selection', xp: 100, stats: '🧠 INT +3 | 👁️ PER +2', est: '1 sprint (90m)' },
+    { title: 'ChromaDB', xp: 200, stats: '⚔️ STR +4 | 💨 AGI +3', est: '2 sprints (1 day)' },
+    { title: 'Qdrant / Pinecone', xp: 200, stats: '⚔️ STR +5 | 🛡️ END +3', est: '2 sprints (1 day)' },
+    { title: 'pgvector', xp: 150, stats: '⚔️ STR +4 | 🧠 INT +2', est: '1 sprint (90m)' },
+    { title: 'Advanced Vector Search', xp: 250, stats: '🧠 INT +5 | 👁️ PER +4', est: '2 sprints (1 day)' },
+    { title: 'BOSS: Knowledge Search Engine', xp: 500, stats: '⚔️ STR +8 | 🧠 INT +6 | 💨 AGI +6', est: '6 days' },
+  ],
+  // GATE 4: The Archive — 7 dungeons + boss
+  [
+    { title: 'What is RAG?', xp: 100, stats: '🧠 INT +4', est: '1 sprint (90m)' },
+    { title: 'Chunking Strategies', xp: 200, stats: '🧠 INT +4 | ⚔️ STR +3', est: '2 sprints (1 day)' },
+    { title: 'Retrieval Deep Dive', xp: 250, stats: '⚔️ STR +5 | 💨 AGI +3', est: '2 sprints (1 day)' },
+    { title: 'Context Integration', xp: 150, stats: '🧠 INT +3 | 👁️ PER +3', est: '1 sprint (90m)' },
+    { title: 'RAG Failure Modes', xp: 150, stats: '👁️ PER +5', est: '1 sprint (90m)' },
+    { title: 'Evaluating RAG', xp: 200, stats: '👁️ PER +4 | 🧠 INT +3', est: '2 sprints (1 day)' },
+    { title: 'Production RAG', xp: 200, stats: '🛡️ END +5 | ⚔️ STR +4', est: '2 sprints (1 day)' },
+    { title: 'BOSS: Customer Support Bot', xp: 500, stats: '🛡️ END +8 | ⚔️ STR +6 | 🧠 INT +4', est: '6 days' },
+  ],
+  // GATE 5: Sage's Sanctum — 7 dungeons + boss
+  [
+    { title: 'HyDE & Query Transformation', xp: 200, stats: '💨 AGI +4 | 🧠 INT +3', est: '2 sprints (1 day)' },
+    { title: 'Contextual Retrieval', xp: 250, stats: '🧠 INT +4 | ⚔️ STR +4', est: '2 sprints (1 day)' },
+    { title: 'Reranking Deep Dive', xp: 250, stats: '👁️ PER +5 | 💨 AGI +4', est: '2 sprints (1 day)' },
+    { title: 'Agentic RAG', xp: 300, stats: '⚔️ STR +5 | 🧠 INT +5', est: '2 sprints (1 day)' },
+    { title: 'Multimodal RAG', xp: 300, stats: '💨 AGI +5 | 👁️ PER +4', est: '2 sprints (1 day)' },
+    { title: 'GraphRAG', xp: 300, stats: '🧠 INT +6 | ⚔️ STR +4', est: '2 sprints (1 day)' },
+    { title: 'Advanced Evaluation', xp: 150, stats: '👁️ PER +5 | 🧠 INT +3', est: '1 sprint (90m)' },
+    { title: 'BOSS: Advanced RAG Engine', xp: 500, stats: '⚔️ STR +8 | 💨 AGI +8 | 🧠 INT +4', est: '6 days' },
+  ],
+  // GATE 6: Conductor's Hall — 8 dungeons + boss
+  [
+    { title: 'Agent Foundations', xp: 200, stats: '🧠 INT +4 | ⚔️ STR +3', est: '2 sprints (1 day)' },
+    { title: 'ReAct Loop from Scratch', xp: 250, stats: '⚔️ STR +5 | 🧠 INT +4', est: '2 sprints (1 day)' },
+    { title: 'Tool Design', xp: 200, stats: '⚔️ STR +4 | 💨 AGI +4', est: '2 sprints (1 day)' },
+    { title: 'Memory Systems', xp: 250, stats: '🧠 INT +5 | 🛡️ END +3', est: '2 sprints (1 day)' },
+    { title: 'LangGraph Deep Dive', xp: 300, stats: '⚔️ STR +6 | 🧠 INT +4', est: '2 sprints (1 day)' },
+    { title: 'Multi-Agent Systems', xp: 300, stats: '⚔️ STR +5 | 👁️ PER +5', est: '2 sprints (1 day)' },
+    { title: 'MCP Protocol', xp: 250, stats: '🧠 INT +4 | 💨 AGI +4', est: '2 sprints (1 day)' },
+    { title: 'Agent Evaluation', xp: 150, stats: '👁️ PER +5 | 🧠 INT +3', est: '1 sprint (90m)' },
+    { title: 'BOSS: Multi-Agent Research System', xp: 600, stats: '⚔️ STR +8 | 🧠 INT +10 | 💨 AGI +6', est: '7 days' },
+  ],
+  // GATE 7: Judge's Court — 8 dungeons + boss
+  [
+    { title: 'Evals-First Mindset', xp: 100, stats: '🧠 INT +4', est: '1 sprint (90m)' },
+    { title: 'LLM-as-Judge', xp: 250, stats: '👁️ PER +5 | ⚔️ STR +4', est: '2 sprints (1 day)' },
+    { title: 'Metrics That Matter', xp: 150, stats: '🧠 INT +3 | 👁️ PER +3', est: '1 sprint (90m)' },
+    { title: 'Evaluation Datasets', xp: 200, stats: '🧠 INT +4 | 💨 AGI +3', est: '2 sprints (1 day)' },
+    { title: 'Building Eval Pipelines', xp: 250, stats: '⚔️ STR +5 | 👁️ PER +4', est: '2 sprints (1 day)' },
+    { title: 'Production Observability', xp: 250, stats: '🛡️ END +5 | 👁️ PER +4', est: '2 sprints (1 day)' },
+    { title: 'Regression Detection', xp: 150, stats: '👁️ PER +5 | 🧠 INT +2', est: '1 sprint (90m)' },
+    { title: 'Custom Eval Framework', xp: 300, stats: '⚔️ STR +6 | 🧠 INT +5', est: '2 sprints (1 day)' },
+    { title: 'BOSS: AI Eval Platform', xp: 500, stats: '👁️ PER +10 | ⚔️ STR +6 | 🧠 INT +6', est: '6 days' },
+  ],
+  // GATE 8: Shield Fortress — 7 dungeons + boss
+  [
+    { title: 'Threat Modeling for AI', xp: 100, stats: '🧠 INT +4 | 👁️ PER +2', est: '1 sprint (90m)' },
+    { title: 'Prompt Injection', xp: 250, stats: '👁️ PER +5 | ⚔️ STR +4', est: '2 sprints (1 day)' },
+    { title: 'Input Guardrails', xp: 250, stats: '⚔️ STR +5 | 🛡️ END +4', est: '2 sprints (1 day)' },
+    { title: 'Output Guardrails', xp: 250, stats: '🛡️ END +5 | 👁️ PER +4', est: '2 sprints (1 day)' },
+    { title: 'PII Redaction', xp: 150, stats: '💨 AGI +4 | 👁️ PER +3', est: '1 sprint (90m)' },
+    { title: 'Content Moderation', xp: 150, stats: '👁️ PER +5 | 🧠 INT +2', est: '1 sprint (90m)' },
+    { title: 'Testing Guardrails', xp: 200, stats: '⚔️ STR +5 | 👁️ PER +4', est: '2 sprints (1 day)' },
+    { title: 'BOSS: Safe AI Gateway', xp: 500, stats: '🛡️ END +8 | 👁️ PER +8 | ⚔️ STR +6', est: '6 days' },
+  ],
+  // GATE 9: Sculptor's Forge — 7 dungeons + boss
+  [
+    { title: 'Fine-Tuning Fundamentals', xp: 200, stats: '🧠 INT +5 | ⚔️ STR +3', est: '2 sprints (1 day)' },
+    { title: 'LoRA & PEFT Deep Dive', xp: 300, stats: '🧠 INT +5 | ⚔️ STR +5', est: '2 sprints (1 day)' },
+    { title: 'Dataset Preparation', xp: 250, stats: '⚔️ STR +4 | 🧠 INT +4', est: '2 sprints (1 day)' },
+    { title: 'Training with Unsloth/TRL', xp: 350, stats: '⚔️ STR +6 | 🧠 INT +5', est: '2 sprints (1 day)' },
+    { title: 'Evaluation & Comparison', xp: 250, stats: '👁️ PER +5 | 🧠 INT +4', est: '2 sprints (1 day)' },
+    { title: 'FT for Function Calling', xp: 200, stats: '⚔️ STR +5 | 💨 AGI +3', est: '1 sprint (90m)' },
+    { title: 'LLMOps & Model Registry', xp: 150, stats: '🛡️ END +4 | 🧠 INT +2', est: '1 sprint (90m)' },
+    { title: 'BOSS: Custom Fine-Tuned Model', xp: 600, stats: '🧠 INT +8 | ⚔️ STR +8 | 👁️ PER +6', est: '7 days' },
+  ],
+  // GATE 10: Architect's Spire — 7 dungeons + boss
+  [
+    { title: 'Production Infrastructure', xp: 200, stats: '🛡️ END +5 | ⚔️ STR +4', est: '2 sprints (1 day)' },
+    { title: 'Model Serving at Scale', xp: 300, stats: '⚔️ STR +5 | 🛡️ END +5', est: '2 sprints (1 day)' },
+    { title: 'Caching with Redis', xp: 200, stats: '💨 AGI +5 | ⚔️ STR +4', est: '2 sprints (1 day)' },
+    { title: 'Cost Optimization', xp: 200, stats: '🧠 INT +5 | 🛡️ END +3', est: '1 sprint (90m)' },
+    { title: 'Latency Optimization', xp: 250, stats: '💨 AGI +6 | ⚔️ STR +4', est: '2 sprints (1 day)' },
+    { title: 'Monitoring & Alerting', xp: 250, stats: '👁️ PER +6 | 🛡️ END +4', est: '2 sprints (1 day)' },
+    { title: 'Multi-Provider Failover', xp: 200, stats: '🛡️ END +5 | 👁️ PER +4', est: '1 sprint (90m)' },
+    { title: 'BOSS: Production Infrastructure', xp: 600, stats: '⚔️ STR +10 | 🛡️ END +10 | 💨 AGI +6', est: '7 days' },
+  ],
+  // GATE 11: Monarch's Throne — 4 dungeons + boss
+  [
+    { title: 'Capstone Planning', xp: 200, stats: '🧠 INT +5 | 🛡️ END +4', est: '2 sprints (1 day)' },
+    { title: 'Core AI Pipeline', xp: 600, stats: '⚔️ STR +8 | 🧠 INT +6 | 💨 AGI +5', est: '6 sprints (3 days)' },
+    { title: 'Production Hardening', xp: 600, stats: '🛡️ END +8 | 👁️ PER +6 | ⚔️ STR +5', est: '6 sprints (3 days)' },
+    { title: 'Launch Prep', xp: 400, stats: '🛡️ END +6 | 💨 AGI +5 | 🧠 INT +4', est: '4 sprints (2 days)' },
+    { title: 'BOSS: Capstone Project', xp: 1000, stats: 'ALL STATS +10', est: '10 days' },
+  ],
+];
+
+// ─── PROGRESSIVE UNLOCK: calculate current mission based on start date ───
+function getCourseDay() {
+  if (!state.startDate) return 0;
+  const start = new Date(state.startDate + 'T00:00:00');
+  const now = new Date();
+  const diff = Math.floor((now - start) / 86400000);
+  return diff >= 0 ? diff + 1 : 0;
+}
+
+function getCurrentGateAndDungeon() {
+  const day = getCourseDay();
+  if (day <= 0) return { gateId: -1, dungeonIdx: -1, title: 'Not started', day: 0, isBoss: false, isRestDay: false, isRedGate: false, gateName: '' };
+  
+  let daysRemaining = day;
+  
+  // Check for rest day pattern: days 6, 13, 20, 27, ... (every 7th day but excluding the red gate which is day 7)
+  // Schedule: 5 days work → 1 day rest → 1 day red gate → repeat = 7-day cycle
+  const cycleDay = (day - 1) % 7;
+  if (cycleDay === 5) return { gateId: -1, dungeonIdx: -1, title: 'REST DAY', day, isBoss: false, isRestDay: true, isRedGate: false, gateName: 'Rest' };
+  if (cycleDay === 6) return { gateId: -1, dungeonIdx: -1, title: 'RED GATE — Review Day', day, isBoss: false, isRestDay: false, isRedGate: true, gateName: 'Red Gate' };
+  
+  // Calculate effective work day (excluding rest/red gates)
+  let workDay = 0;
+  for (let d = 1; d <= day; d++) {
+    const cd = (d - 1) % 7;
+    if (cd !== 5 && cd !== 6) workDay++;
+  }
+  
+  // Map work day to gate/dungeon
+  daysRemaining = workDay;
+  for (let g = 0; g < GATE_SCHEDULE.length; g++) {
+    const gate = GATE_SCHEDULE[g];
+    const total = gate.dungeons + 1; // +1 for boss
+    
+    if (daysRemaining <= total) {
+      if (daysRemaining <= gate.dungeons) {
+        return {
+          gateId: g,
+          dungeonIdx: daysRemaining - 1,
+          title: GATE_DUNGEONS[g][daysRemaining - 1].title,
+          day,
+          isBoss: false,
+          isRestDay: false,
+          isRedGate: false,
+          gateName: gate.name,
+          dungeonData: GATE_DUNGEONS[g][daysRemaining - 1]
+        };
+      } else {
+        // Boss battle
+        const bossDay = daysRemaining - gate.dungeons;
+        return {
+          gateId: g,
+          dungeonIdx: gate.dungeons, // boss index
+          title: GATE_DUNGEONS[g][gate.dungeons].title,
+          day,
+          isBoss: true,
+          bossDay,
+          isRestDay: false,
+          isRedGate: false,
+          gateName: gate.name,
+          dungeonData: GATE_DUNGEONS[g][gate.dungeons]
+        };
+      }
+    }
+    daysRemaining -= total;
+  }
+  
+  // Beyond all gates
+  return { gateId: 11, dungeonIdx: -1, title: 'All Gates Complete! 🎉', day, isBoss: false, isRestDay: false, isRedGate: false, gateName: 'Completed' };
+}
+
+// ─── MISSION RENDER ───
+function renderMissions() {
+  const mission = getCurrentGateAndDungeon();
+  const dayLabel = document.getElementById('missionDayLabel');
+  const content = document.getElementById('missionContent');
+  
+  dayLabel.textContent = `Day ${mission.day}`;
+  
+  if (mission.isRestDay) {
+    content.innerHTML = `
+      <div class="card" style="text-align:center;border-color:var(--accent);">
+        <div style="font-size:48px;margin-bottom:12px;">😴</div>
+        <h2 style="color:var(--accent2);font-size:20px;margin-bottom:8px;">REST DAY</h2>
+        <p style="color:var(--text2);font-size:14px;line-height:1.6;">
+          The System grants you rest. Your streak continues.<br>
+          No training required today.
+        </p>
+        <p style="color:var(--text3);font-size:13px;margin-top:12px;">
+          But if you want bonus XP, complete a Demon Castle challenge!
+        </p>
+      </div>
+    `;
+    renderGateProgress();
+    return;
+  }
+  
+  if (mission.isRedGate) {
+    content.innerHTML = `
+      <div class="card" style="text-align:center;border-color:var(--gold);">
+        <div style="font-size:48px;margin-bottom:12px;">🔁</div>
+        <h2 style="color:var(--gold);font-size:20px;margin-bottom:8px;">RED GATE — REVIEW DAY</h2>
+        <p style="color:var(--text2);font-size:14px;line-height:1.6;">
+          No new content. Active revision only.<br>
+          <strong>+150 XP</strong> available today.
+        </p>
+        <div style="text-align:left;margin-top:16px;background:var(--bg2);padding:16px;border-radius:8px;">
+          <p style="font-size:13px;margin-bottom:8px;"><strong>Today's Review Tasks:</strong></p>
+          <label style="display:block;font-size:13px;padding:4px 0;cursor:pointer;">
+            <input type="checkbox" onchange="saveReviewCheck(0)"> Re-do 3 Shadow Extractions from memory
+          </label>
+          <label style="display:block;font-size:13px;padding:4px 0;cursor:pointer;">
+            <input type="checkbox" onchange="saveReviewCheck(1)"> Re-type 1 key code example from the past week
+          </label>
+          <label style="display:block;font-size:13px;padding:4px 0;cursor:pointer;">
+            <input type="checkbox" onchange="saveReviewCheck(2)"> Complete 1 Demon Castle challenge
+          </label>
+        </div>
+      </div>
+    `;
+    renderGateProgress();
+    return;
+  }
+  
+  if (mission.gateId < 0) {
+    content.innerHTML = `
+      <div class="empty-state">
+        <div class="big-icon">⚜️</div>
+        <p>Your journey hasn't started yet.<br>Set your start date to begin tracking!</p>
+      </div>
+    `;
+    renderGateProgress();
+    return;
+  }
+  
+  // Show current mission
+  const d = mission.dungeonData;
+  const isUnlocked = mission.gateId <= getCurrentCompletedGates() + 1;
+  
+  if (!isUnlocked) {
+    content.innerHTML = `
+      <div class="card" style="text-align:center;border-color:var(--text3);opacity:0.7;">
+        <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+        <h2 style="color:var(--text3);font-size:18px;margin-bottom:8px;">Gate Locked</h2>
+        <p style="color:var(--text2);font-size:14px;">
+          Complete previous gates to unlock this mission.
+        </p>
+      </div>
+    `;
+    renderGateProgress();
+    return;
+  }
+  
+  const status = state.gates[mission.gateId] || 'locked';
+  const isCompleted = mission.isBoss ? (status === 'completed') : false;
+  
+  content.innerHTML = `
+    <div class="mission-banner" style="
+      background: linear-gradient(135deg, var(--bg2), ${mission.isBoss ? 'rgba(245,158,11,0.1)' : 'rgba(124,58,237,0.1)'});
+      border: 1px solid ${mission.isBoss ? 'var(--gold)' : 'var(--accent)'};
+      border-radius: 12px; padding: 20px; margin-bottom: 16px;
+    ">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px;">
+        <div>
+          <div style="font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:1px;">
+            Gate ${mission.gateId}: ${mission.gateName}
+            ${mission.isBoss ? ' • 👑 BOSS BATTLE' : ''}
+            ${isCompleted ? ' • ✅ CLEARED' : ''}
+          </div>
+          <div style="font-size:18px;font-weight:800;color:var(--text);margin:4px 0;">
+            ${mission.isBoss ? '👑 ' : '🏰 '} ${d.title}
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px;color:var(--text3);">XP</div>
+          <div style="font-size:20px;font-weight:800;color:var(--accent2);">+${d.xp}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;font-size:13px;">
+        <span style="color:var(--text2);">⏱ ${d.est}</span>
+        <span style="color:var(--text2);">📊 ${d.stats}</span>
+        ${mission.isBoss ? `<span style="color:var(--gold);font-weight:700;">👑 Boss Battle — ${d.est}</span>` : ''}
+      </div>
+    </div>
+    
+    <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:12px;padding:20px;">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">
+        ${mission.isBoss ? '🎯 BATTLE PLAN' : '📋 MISSION BRIEFING'}
+      </div>
+      <div class="mission-md-content" style="font-size:14px;line-height:1.7;color:var(--text2);">
+        <p>Open the full gate file for complete mission details:</p>
+        <p style="margin-top:8px;">
+          <a href="GATE-${String(mission.gateId).padStart(2, '0')}-${GATES_DATA[mission.gateId].name.replace(/[^a-zA-Z0-9]/g, '-').replace(/--+/g, '-')}.md" 
+             target="_blank" 
+             style="color:var(--accent2);text-decoration:none;font-weight:600;">
+            📄 Open Gate ${mission.gateId}: ${mission.gateName}
+          </a>
+        </p>
+      </div>
+    </div>
+  `;
+  
+  renderGateProgress();
+}
+
+function getCurrentCompletedGates() {
+  let completed = -1;
+  for (let g = 0; g < GATES_DATA.length; g++) {
+    if (state.gates[g] === 'completed') completed = g;
+  }
+  return completed;
+}
+
+function renderGateProgress() {
+  const list = document.getElementById('gateProgressList');
+  if (!list) return;
+  list.innerHTML = '';
+  
+  const completedGate = getCurrentCompletedGates();
+  
+  GATES_DATA.forEach((g, idx) => {
+    const status = state.gates[idx] || 'locked';
+    const isCurrent = idx === completedGate + 1 && (status === 'active' || status === 'locked');
+    const row = document.createElement('div');
+    row.style.cssText = `
+      display:flex;align-items:center;gap:12px;padding:10px 14px;
+      background:var(--bg2);border:1px solid var(--bg4);border-radius:8px;
+      margin-bottom:6px;transition:all 0.2s;
+    `;
+    if (status === 'completed') {
+      row.style.borderColor = 'var(--green2)';
+      row.style.opacity = '0.7';
+    }
+    if (isCurrent) {
+      row.style.borderColor = 'var(--accent2)';
+      row.style.background = 'rgba(124,58,237,0.08)';
+    }
+    
+    const num = document.createElement('div');
+    num.style.cssText = `
+      width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:12px;flex-shrink:0;
+    `;
+    num.style.background = status === 'completed' ? 'var(--green2)' : isCurrent ? 'var(--accent)' : 'var(--bg4)';
+    num.style.color = status === 'completed' || isCurrent ? '#fff' : 'var(--text3)';
+    num.textContent = status === 'completed' ? '✓' : idx;
+    
+    const info = document.createElement('div');
+    info.style.cssText = 'flex:1;';
+    info.innerHTML = `
+      <div style="font-size:13px;font-weight:600;">Gate ${idx}: ${g.name}</div>
+      <div style="font-size:11px;color:var(--text3);">${g.sub}</div>
+    `;
+    
+    const badge = document.createElement('div');
+    badge.style.cssText = 'font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;';
+    if (status === 'completed') {
+      badge.style.background = 'rgba(34,197,94,0.15)';
+      badge.style.color = 'var(--green)';
+      badge.textContent = '✅ CLEARED';
+    } else if (isCurrent) {
+      badge.style.background = 'rgba(124,58,237,0.15)';
+      badge.style.color = 'var(--accent2)';
+      badge.textContent = '⚔️ ACTIVE';
+    } else {
+      badge.style.background = 'rgba(148,163,184,0.1)';
+      badge.style.color = 'var(--text3)';
+      badge.textContent = '🔒 LOCKED';
+    }
+    
+    row.appendChild(num);
+    row.appendChild(info);
+    row.appendChild(badge);
+    list.appendChild(row);
+  });
+}
+
+// ─── REVIEW DAY SAVE ───
+function saveReviewCheck(idx) {
+  let checks = JSON.parse(localStorage.getItem('sl_redgate_checks') || '[false,false,false]');
+  checks[idx] = !checks[idx];
+  localStorage.setItem('sl_redgate_checks', JSON.stringify(checks));
+}
+  
+  QUEST_IDS.forEach(id => {
+    const item = document.querySelector(`[data-quest="${id}"]`);
+    if (item) {
+      if (state.dailyQuest[id]) {
+        item.classList.add('done');
+      } else {
+        item.classList.remove('done');
+      }
+    }
+  });
+  
+  const completed = QUEST_IDS.filter(id => state.dailyQuest[id]).length;
+  const potential = QUEST_IDS.filter(id => state.dailyQuest[id]).reduce((sum, id) => sum + QUEST_XP[id], 0);
+  
+  document.getElementById('questProgress').textContent = `${completed}/${QUEST_IDS.length}`;
+  document.getElementById('questPotentialXp').textContent = potential;
+  document.getElementById('questBar').style.width = `${(completed / QUEST_IDS.length) * 100}%`;
+}
+
+// ─── TABS ───
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById(`tab-${this.dataset.tab}`).classList.add('active');
+  });
+});
+
+// ─── INIT ───
+function init() {
+  const loaded = loadState();
+  if (!loaded) {
+    state = getDefaultState();
+    saveState();
+  }
+  
+  // Check if this is a new day
+  const today = new Date().toISOString().split('T')[0];
+  if (state.dailyQuest._date !== today) {
+    state.dailyQuest = getEmptyQuest();
+    state.dailyQuest._date = today;
+    // Update streak if last active was yesterday
+    if (state.lastActiveDate) {
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      if (state.lastActiveDate === yesterday) {
+        // streak continues, already counted
+      } else if (state.lastActiveDate !== today) {
+        state.streak = 0; // missed a day
+      }
+    }
+    saveState();
+  }
+  
+  renderAll();
+}
+
+init();
+</script>
+</body>
+</html>

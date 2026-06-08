@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solo Leveling — AI Engineering Tracker</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--card:#13131f;--card2:#1a1a2e;--accent:#00d4ff;--gold:#ffd700;--text:#e0e0e0;--dim:#666;--red:#ff4444;--green:#44ff44;--orange:#ff8800}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:linear-gradient(135deg,#0a0a12 0%,#1a1a2e 100%);border-bottom:2px solid var(--accent);padding:20px 30px;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:24px;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
+.header .rank{font-size:14px;color:var(--dim);background:var(--card);padding:6px 14px;border-radius:20px;border:1px solid var(--accent)}
+.tabs{display:flex;background:var(--card);border-bottom:1px solid #2a2a3e;overflow-x:auto}
+.tab{padding:14px 24px;cursor:pointer;color:var(--dim);border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;font-size:14px;font-weight:600}
+.tab:hover{color:var(--text);background:rgba(0,212,255,0.05)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.content{padding:24px 30px;max-width:1200px;margin:0 auto}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid #2a2a3e}
+.card h2{font-size:18px;margin-bottom:12px;color:var(--accent)}
+.card h3{font-size:15px;margin:12px 0 6px;color:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.stat{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1a2e;font-size:14px}
+.stat:last-child{border-bottom:none}
+.stat-label{color:var(--dim)}.stat-value{color:var(--text);font-weight:600}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600}
+.badge-done{background:rgba(68,255,68,0.15);color:var(--green)}
+.badge-progress{background:rgba(0,212,255,0.15);color:var(--accent)}
+.badge-locked{background:rgba(102,102,102,0.15);color:var(--dim)}
+.badge-boss{background:rgba(255,68,68,0.15);color:var(--red)}
+.boss-card{border:2px solid var(--red);background:linear-gradient(135deg,#1a0a0a,#13131f)}
+.boss-card h2{color:var(--red)}
+.progress-bar{height:8px;background:var(--card2);border-radius:4px;overflow:hidden;margin:8px 0}
+.progress-fill{height:100%;border-radius:4px;transition:width .5s;background:linear-gradient(90deg,var(--accent),var(--gold))}
+.gate-list{list-style:none;padding:0}
+.gate-item{display:flex;align-items:center;padding:12px 16px;margin-bottom:8px;background:var(--card2);border-radius:8px;cursor:pointer;transition:all .2s;border-left:4px solid var(--dim)}
+.gate-item:hover{background:#22223a}
+.gate-item.unlocked{border-left-color:var(--accent)}
+.gate-item.done{border-left-color:var(--green);opacity:.8}
+.gate-item.current{border-left-color:var(--gold);background:linear-gradient(135deg,#1a1a0a,var(--card2))}
+.gate-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin-right:14px;background:var(--card);flex-shrink:0}
+.gate-item.unlocked .gate-num{background:var(--accent);color:#000}
+.gate-item.done .gate-num{background:var(--green);color:#000}
+.gate-item.current .gate-num{background:var(--gold);color:#000}
+.gate-info{flex:1}
+.gate-name{font-weight:600;font-size:14px;margin-bottom:2px}
+.gate-theme{font-size:12px;color:var(--dim)}
+.gate-days{font-size:11px;color:var(--dim);margin-top:2px}
+.mission-banner{background:linear-gradient(135deg,#1a2a3e,#0a0a12);border:1px solid var(--accent);border-radius:12px;padding:20px;margin-bottom:16px}
+.mission-banner h2{color:var(--gold);font-size:20px;margin-bottom:8px}
+.mission-meta{display:flex;gap:20px;flex-wrap:wrap;margin:12px 0;font-size:13px}
+.mission-meta span{color:var(--dim)}
+.mission-meta strong{color:var(--text)}
+.mission-md-content{background:var(--card);border-radius:8px;padding:20px;margin:12px 0;border:1px solid #2a2a3e;line-height:1.7;font-size:14px}
+.mission-md-content h1{font-size:22px;color:var(--accent);margin:16px 0 8px}
+.mission-md-content h2{font-size:18px;color:var(--gold);margin:14px 0 6px;border-bottom:1px solid #2a2a3e;padding-bottom:4px}
+.mission-md-content h3{font-size:15px;color:var(--text);margin:12px 0 4px}
+.mission-md-content p{margin:8px 0}
+.mission-md-content code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent)}
+.mission-md-content pre{background:var(--card2);padding:14px;border-radius:8px;overflow-x:auto;margin:10px 0;border:1px solid #2a2a3e}
+.mission-md-content pre code{background:none;padding:0;color:var(--green)}
+.mission-md-content ul,.mission-md-content ol{padding-left:24px;margin:8px 0}
+.mission-md-content li{margin:4px 0}
+.mission-md-content blockquote{border-left:3px solid var(--accent);padding:8px 16px;margin:10px 0;background:rgba(0,212,255,0.05);border-radius:0 8px 8px 0;color:var(--dim)}
+.mission-md-content table{border-collapse:collapse;margin:10px 0;width:100%;font-size:13px}
+.mission-md-content th,.mission-md-content td{border:1px solid #2a2a3e;padding:8px 12px;text-align:left}
+.mission-md-content th{background:var(--card2);color:var(--accent);font-weight:600}
+.mission-md-content strong{color:var(--gold)}
+.mission-md-content a{color:var(--accent)}
+.mission-md-content hr{border:none;border-top:1px solid #2a2a3e;margin:16px 0}
+.mission-md-content .md-check{list-style:none;padding-left:0}
+.mission-md-content .md-check li::before{content:"☐ ";color:var(--dim)}
+.mission-md-content .md-check li.checked::before{content:"☑ ";color:var(--green)}
+.btn{background:var(--accent);color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;transition:all .2s;font-size:14px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,212,255,0.3)}
+.btn-sm{padding:6px 14px;font-size:12px}
+input,select{background:var(--card2);border:1px solid #2a2a3e;color:var(--text);padding:8px 12px;border-radius:6px;font-size:14px}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+label{font-size:13px;color:var(--dim);display:block;margin-bottom:4px}
+.xp-bar{background:var(--card2);border-radius:8px;padding:4px;margin:6px 0}
+.xp-fill{background:linear-gradient(90deg,var(--gold),var(--orange));height:16px;border-radius:6px;transition:width .8s;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#000;min-width:fit-content;padding:0 6px}
+.quest{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #1a1a2e;font-size:13px}
+.quest:last-child{border-bottom:none}
+.quest-icon{font-size:16px;width:24px;text-align:center}
+.dungeon-list{margin:12px 0}
+.dungeon-item{padding:10px 14px;background:var(--card2);border-radius:6px;margin-bottom:6px;border-left:3px solid var(--accent);font-size:13px}
+.dungeon-item.boss-dungeon{border-left-color:var(--red);background:linear-gradient(135deg,#1a0a0a,var(--card2))}
+.dungeon-item.done{border-left-color:var(--green);opacity:.7}
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--card);border:1px solid #2a2a3e;border-radius:16px;padding:24px;max-width:700px;width:90%;max-height:85vh;overflow-y:auto}
+.modal h2{margin-bottom:16px;color:var(--gold)}
+.modal-close{float:right;background:none;border:none;color:var(--dim);font-size:24px;cursor:pointer}
+.modal-close:hover{color:var(--text)}
+.empty-state{text-align:center;padding:40px;color:var(--dim)}
+.empty-state h3{font-size:18px;margin-bottom:8px;color:var(--text)}
+.gate-detail-header{margin-bottom:16px}
+.gate-detail-header .rank-req{font-size:13px;color:var(--dim)}
+@media(max-width:768px){.content{padding:16px}.grid{grid-template-columns:1fr}.header{padding:14px 16px}.header h1{font-size:18px}.tab{padding:12px 16px;font-size:13px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⛩️ SOLO LEVELING — AI ENGINEERING</h1>
+  <div class="rank" id="headerRank">Rank: E → S</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="status" onclick="switchTab('status')">📊 Status</div>
+  <div class="tab" data-tab="missions" onclick="switchTab('missions')">⚔️ Missions</div>
+  <div class="tab" data-tab="gates" onclick="switchTab('gates')">🏛️ Gates</div>
+  <div class="tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Settings</div>
+</div>
+
+<div class="content">
+
+<!-- STATUS PANEL -->
+<div class="panel active" id="panel-status">
+  <div class="grid">
+    <div class="card">
+      <h2>📊 Progress Overview</h2>
+      <div class="stat"><span class="stat-label">Current Day</span><span class="stat-value" id="currentDay">—</span></div>
+      <div class="stat"><span class="stat-label">Current Gate</span><span class="stat-value" id="currentGate">—</span></div>
+      <div class="stat"><span class="stat-label">Course Progress</span><span class="stat-value" id="courseProgress">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="courseProgressBar" style="width:0%"></div></div>
+      <div class="stat"><span class="stat-label">Total XP</span><span class="stat-value" id="totalXp">0</span></div>
+      <div class="stat"><span class="stat-label">Gates Completed</span><span class="stat-value" id="gatesCompleted">0 / 12</span></div>
+    </div>
+    <div class="card">
+      <h2>⏱️ Today's Schedule</h2>
+      <div id="todaySchedule">
+        <div class="empty-state"><h3>No schedule yet</h3><p>Set your start date in Settings to begin.</p></div>
+      </div>
+    </div>
+    <div class="card boss-card">
+      <h2>⚔️ Current Boss Battle</h2>
+      <div id="currentBoss">
+        <div class="empty-state"><h3>No active boss</h3></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MISSIONS PANEL -->
+<div class="panel" id="panel-missions">
+  <div class="card">
+    <h2>Today's Missions</h2>
+    <div id="missionsView">
+      <div class="empty-state"><h3>No missions yet</h3><p>Set your start date in Settings to generate missions.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- GATES PANEL -->
+<div class="panel" id="panel-gates">
+  <div class="card">
+    <h2>🏛️ All Gates</h2>
+    <p style="color:var(--dim);font-size:13px;margin-bottom:12px">12 gates to conquer. Each gate unlocks after completing the previous.</p>
+    <ul class="gate-list" id="gateList"></ul>
+  </div>
+</div>
+
+<!-- SETTINGS PANEL -->
+<div class="panel" id="panel-settings">
+  <div class="card">
+    <h2>⚙️ Settings</h2>
+    <div style="margin-bottom:16px">
+      <label>Start Date (when did you begin the course?)</label>
+      <input type="date" id="startDateInput" onchange="setStartDate(this.value)" style="width:100%;max-width:300px">
+    </div>
+    <div style="margin-bottom:16px">
+      <label>Current Course Day (override auto-calc)</label>
+      <input type="number" id="dayOverride" min="1" max="365" style="width:100px" onchange="setDayOverride(this.value)">
+    </div>
+    <div style="margin-bottom:16px">
+      <button class="btn" onclick="resetAllData()">Reset All Progress</button>
+      <span style="color:var(--dim);font-size:12px;margin-left:10px">This clears all saved data</span>
+    </div>
+  </div>
+  <div class="card">
+    <h2>📖 About This System</h2>
+    <p style="font-size:13px;line-height:1.6;color:var(--dim)">
+      The <strong style="color:var(--text)">Solo Leveling AI Engineering</strong> course guides you through 12 gates of increasing difficulty.
+      Each gate covers a core discipline of modern AI engineering: Prompt Engineering, Embeddings, RAG, Agents, Evaluation,
+      Guardrails, Fine-Tuning, and Production Deployment.
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:var(--dim);margin-top:8px">
+      Track your daily progress here. Each day shows your current dungeon mission with concept explanations,
+      code challenges, and boss battles.
+    </p>
+  </div>
+</div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="gateModal" onclick="if(event.target===this)closeGateModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeGateModal()">&times;</button>
+    <div id="gateModalContent"></div>
+  </div>
+</div>
+
+<script>
+// ─── GATE SCHEDULE ───
+const GATE_SCHEDULE = [
+  {num:1, name:"The Awakening", theme:"AI Engineering Overview", days:3, rankReq:"E", totalDays:0},
+  {num:2, name:"Wordsmith Domain", theme:"Prompt Engineering", days:9, rankReq:"E→D", totalDays:3},
+  {num:3, name:"Compass Tower", theme:"Embeddings & Vector DBs", days:8, rankReq:"D+", totalDays:12},
+  {num:4, name:"The Archive", theme:"RAG Foundations", days:8, rankReq:"C-", totalDays:20},
+  {num:5, name:"Sage's Sanctum", theme:"Advanced RAG", days:8, rankReq:"C+", totalDays:28},
+  {num:6, name:"Conductor's Hall", theme:"Agents & Tool Use", days:9, rankReq:"B-", totalDays:36},
+  {num:7, name:"Judge's Court", theme:"Evaluation & Observability", days:9, rankReq:"B", totalDays:45},
+  {num:8, name:"Shield Fortress", theme:"Guardrails & Safety", days:8, rankReq:"B+", totalDays:54},
+  {num:9, name:"Sculptor's Forge", theme:"Fine-Tuning", days:8, rankReq:"A-", totalDays:62},
+  {num:10, name:"Architect's Spire", theme:"Production Deployment", days:8, rankReq:"A", totalDays:70},
+  {num:11, name:"Monarch's Throne", theme:"Capstone Project", days:5, rankReq:"A+", totalDays:78},
+  {num:12, name:"Red Gate Review", theme:"Comprehensive Review & Final Assessment", days:7, rankReq:"S", totalDays:83}
+];
+
+// Compute cumulative start days
+let cumDays = 0;
+GATE_SCHEDULE.forEach(g => { g.startDay = cumDays + 1; cumDays += g.days; g.endDay = cumDays; });
+TOTAL_COURSE_DAYS = cumDays;
+
+// ─── GATE DUNGEONS ───
+const GATE_DUNGEONS = {
+  1: {name:"The Awakening", dungeons:[
+    {day:1, title:"What is AI Engineering?", concept:"The full stack of building AI systems", xp:50, est:"20min"},
+    {day:2, title:"Development Environment", concept:"Setting up Python, APIs, and tools", xp:50, est:"30min"},
+    {day:3, title:"The Roadmap Ahead", concept:"Preview of all 11 remaining gates", xp:50, est:"15min"},
+    {day:4, title:"Boss Battle: The First Spell", concept:"Build your first complete AI pipeline", xp:100, isBoss:true}
+  ]},
+  2: {name:"Wordsmith Domain", dungeons:[
+    {day:1, title:"Anatomy of a Prompt", concept:"Role, Context, Task, Format framework", xp:60, est:"25min"},
+    {day:2, title:"Zero-Shot vs Few-Shot", concept:"Examples-based prompting", xp:60, est:"25min"},
+    {day:3, title:"Chain-of-Thought", concept:"Step-by-step reasoning", xp:60, est:"30min"},
+    {day:4, title:"System Prompts & Personas", concept:"Behavior control through system messages", xp:60, est:"25min"},
+    {day:5, title:"Structured Outputs", concept:"JSON, XML, schema enforcement", xp:60, est:"30min"},
+    {day:6, title:"Prompt Chaining", concept:"Multi-step prompt workflows", xp:60, est:"30min"},
+    {day:7, title:"Temperature & Sampling", concept:"Creativity vs determinism control", xp:60, est:"20min"},
+    {day:8, title:"Prompt Engineering Patterns", concept:"Advanced patterns library", xp:60, est:"30min"},
+    {day:9, title:"Boss: Prompt Engineering System", concept:"Design a complete prompt system", xp:150, isBoss:true}
+  ]},
+  3: {name:"Compass Tower", dungeons:[
+    {day:1, title:"What Are Embeddings?", concept:"Vector representations of meaning", xp:65, est:"25min"},
+    {day:2, title:"Cosine Similarity", concept:"Distance metrics for vectors", xp:65, est:"30min"},
+    {day:3, title:"Chunking Strategies", concept:"Document splitting for embedding", xp:65, est:"30min"},
+    {day:4, title:"Vector Database Fundamentals", concept:"ChromaDB, HNSW, ANN search", xp:65, est:"35min"},
+    {day:5, title:"Dense vs Sparse Embeddings", concept:"Hybrid search strategies", xp:65, est:"30min"},
+    {day:6, title:"Embedding Models Compared", concept:"Model selection trade-offs", xp:65, est:"25min"},
+    {day:7, title:"Multimodal Embeddings", concept:"CLIP and cross-modal search", xp:65, est:"30min"},
+    {day:8, title:"Boss: Knowledge Search Engine", concept:"Build a semantic search system", xp:160, isBoss:true}
+  ]},
+  4: {name:"The Archive", dungeons:[
+    {day:1, title:"The RAG Triad", concept:"Ingestion → Retrieval → Generation", xp:70, est:"25min"},
+    {day:2, title:"Document Ingestion Pipeline", concept:"Load, clean, chunk, embed, store", xp:70, est:"30min"},
+    {day:3, title:"Context Injection Strategies", concept:"How to assemble prompts from retrieved docs", xp:70, est:"25min"},
+    {day:4, title:"Source Citation & Attribution", concept:"Traceable claims", xp:70, est:"25min"},
+    {day:5, title:"Query Transformation", concept:"Rewrite, HyDE, multi-query", xp:70, est:"30min"},
+    {day:6, title:"RAG Evaluation", concept:"Hit rate, MRR, faithfulness", xp:70, est:"30min"},
+    {day:7, title:"Advanced Retrieval", concept:"Reranking, flashrank, late interaction", xp:70, est:"30min"},
+    {day:8, title:"Boss: Customer Support Bot", concept:"Build a complete RAG system", xp:170, isBoss:true}
+  ]},
+  5: {name:"Sage's Sanctum", dungeons:[
+    {day:1, title:"Indexing Strategies", concept:"Hierarchical, flat, multi-representation", xp:75, est:"30min"},
+    {day:2, title:"RAG Routing", concept:"Classify queries before handling", xp:75, est:"25min"},
+    {day:3, title:"Self-RAG & CRAG", concept:"Self-evaluating retrieval", xp:75, est:"35min"},
+    {day:4, title:"Agentic RAG", concept:"Tool-using retrieval agents", xp:75, est:"35min"},
+    {day:5, title:"Multi-Modal RAG", concept:"Images, tables, charts", xp:75, est:"30min"},
+    {day:6, title:"Chat Memory & RAG", concept:"Conversational context", xp:75, est:"25min"},
+    {day:7, title:"Production RAG Architecture", concept:"Caching, monitoring, A/B testing", xp:75, est:"30min"},
+    {day:8, title:"Boss: Advanced RAG Engine", concept:"Build an advanced hybrid system", xp:180, isBoss:true}
+  ]},
+  6: {name:"Conductor's Hall", dungeons:[
+    {day:1, title:"What Makes an Agent?", concept:"LLM + tools + loop paradigm", xp:80, est:"30min"},
+    {day:2, title:"Function Calling (Native)", concept:"Structured tool definitions", xp:80, est:"30min"},
+    {day:3, title:"Tool Design Patterns", concept:"Granularity, naming, error handling", xp:80, est:"25min"},
+    {day:4, title:"Planning & Reasoning", concept:"ReAct, Plan-and-Solve", xp:80, est:"35min"},
+    {day:5, title:"Agent Memory", concept:"Short-term, long-term, episodic", xp:80, est:"25min"},
+    {day:6, title:"Multi-Agent Systems", concept:"Supervisor, debate, swarm", xp:80, est:"35min"},
+    {day:7, title:"Error Handling & Recovery", concept:"Resilient agent patterns", xp:80, est:"25min"},
+    {day:8, title:"Agent Observability", concept:"Tracing every decision", xp:80, est:"25min"},
+    {day:9, title:"Boss: Multi-Tool Orchestrator", concept:"Build a complete agent system", xp:200, isBoss:true}
+  ]},
+  7: {name:"Judge's Court", dungeons:[
+    {day:1, title:"Why Evaluation Matters", concept:"Quality measurement imperative", xp:85, est:"20min"},
+    {day:2, title:"Classification Metrics", concept:"Precision, recall, F1", xp:85, est:"30min"},
+    {day:3, title:"Generation Metrics", concept:"BLEU, ROUGE, BERTScore", xp:85, est:"30min"},
+    {day:4, title:"LLM-as-Judge", concept:"Model-based evaluation", xp:85, est:"30min"},
+    {day:5, title:"Eval Dataset Creation", concept:"Golden, edge, regression sets", xp:85, est:"30min"},
+    {day:6, title:"Observability & Monitoring", concept:"Real-time quality tracking", xp:85, est:"30min"},
+    {day:7, title:"A/B Testing", concept:"Statistical experimentation", xp:85, est:"25min"},
+    {day:8, title:"Continuous Eval Pipeline", concept:"CI/CD for LLM quality", xp:85, est:"25min"},
+    {day:9, title:"Boss: Evaluation Platform", concept:"Build a complete eval system", xp:210, isBoss:true}
+  ]},
+  8: {name:"Shield Fortress", dungeons:[
+    {day:1, title:"Why Guardrails?", concept:"Safety imperative for LLM apps", xp:90, est:"20min"},
+    {day:2, title:"Input Guardrails", concept:"Toxicity, injection, jailbreak filters", xp:90, est:"30min"},
+    {day:3, title:"Output Guardrails", concept:"PII, format, factual consistency", xp:90, est:"30min"},
+    {day:4, title:"Guardrail Orchestration", concept:"Block, flag, transform strategies", xp:90, est:"25min"},
+    {day:5, title:"Rate Limiting & Abuse Prevention", concept:"Token bucket, per-user limits", xp:90, est:"25min"},
+    {day:6, title:"Safety Monitoring", concept:"Event tracking and trend analysis", xp:90, est:"25min"},
+    {day:7, title:"Red Teaming", concept:"Adversarial testing", xp:90, est:"35min"},
+    {day:8, title:"Boss: Security Pavilion", concept:"Build complete guardrail system", xp:220, isBoss:true}
+  ]},
+  9: {name:"Sculptor's Forge", dungeons:[
+    {day:1, title:"Fine-Tuning vs RAG", concept:"When to fine-tune vs retrieve", xp:95, est:"25min"},
+    {day:2, title:"Dataset Preparation", concept:"ChatML format, quality, dedup", xp:95, est:"30min"},
+    {day:3, title:"LoRA & QLoRA", concept:"Parameter-efficient fine-tuning", xp:95, est:"35min"},
+    {day:4, title:"Training Recipes", concept:"Hyperparameters and schedules", xp:95, est:"30min"},
+    {day:5, title:"Evaluating Fine-Tuned Models", concept:"Task perf vs general knowledge", xp:95, est:"30min"},
+    {day:6, title:"Model Distillation", concept:"Teacher-student compression", xp:95, est:"30min"},
+    {day:7, title:"Deployment of Fine-Tuned Models", concept:"Inference servers, benchmarking", xp:95, est:"30min"},
+    {day:8, title:"Boss: Fine-Tuning Workshop", concept:"Build complete FT pipeline", xp:230, isBoss:true}
+  ]},
+  10: {name:"Architect's Spire", dungeons:[
+    {day:1, title:"Production Architecture", concept:"Distributed LLM system design", xp:100, est:"30min"},
+    {day:2, title:"Containerization", concept:"Docker, K8s for LLM services", xp:100, est:"30min"},
+    {day:3, title:"Caching Strategies", concept:"Exact, semantic, prefix cache", xp:100, est:"25min"},
+    {day:4, title:"Cost Optimization", concept:"Model selection, token savings", xp:100, est:"30min"},
+    {day:5, title:"CI/CD for LLM Applications", concept:"Automated eval gates", xp:100, est:"30min"},
+    {day:6, title:"Incident Response", concept:"Runbooks and containment", xp:100, est:"25min"},
+    {day:7, title:"Load Testing & Scaling", concept:"Finding system limits", xp:100, est:"30min"},
+    {day:8, title:"Boss: Production Deployment", concept:"Design complete deployment", xp:250, isBoss:true}
+  ]},
+  11: {name:"Monarch's Throne", dungeons:[
+    {day:1, title:"The Grand Architecture", concept:"All gates connected", xp:120, est:"30min"},
+    {day:2, title:"The Capstone Project", concept:"Build something real", xp:120, est:"45min"},
+    {day:3, title:"The Decision Matrix", concept:"Systematic trade-off analysis", xp:120, est:"30min"},
+    {day:4, title:"The Road Ahead", concept:"Continuing education plan", xp:120, est:"25min"},
+    {day:5, title:"FINAL BOSS: Monarch's Trial", concept:"Mastery demonstration", xp:500, isBoss:true}
+  ]},
+  12: {name:"Red Gate Review", dungeons:[
+    {day:1, title:"Gates 1-3 Review", concept:"Foundations recap", xp:50, est:"30min"},
+    {day:2, title:"Gates 4-5 Review", concept:"RAG systems recap", xp:50, est:"30min"},
+    {day:3, title:"Gates 6-7 Review", concept:"Agents & Evaluation recap", xp:50, est:"30min"},
+    {day:4, title:"Gates 8-9 Review", concept:"Safety & Fine-Tuning recap", xp:50, est:"30min"},
+    {day:5, title:"Gate 10 Review", concept:"Production deployment recap", xp:50, est:"30min"},
+    {day:6, title:"Gate 11 & Final Review", concept:"Capstone & full synthesis", xp:50, est:"30min"},
+    {day:7, title:"Graduation Day", concept:"Ceremony and next steps", xp:200, isBoss:true}
+  ]}
+};
+
+const RANKS = ["E","E→D","D","D+","D→C","C-","C","C+","C→B","B-","B","B+","B→A","A-","A","A+","S"];
+
+// ─── STATE ───
+let state = {startDate:null,dayOverride:null,completedDungeons:{}};
+function loadState() {
+  try{
+    const saved = localStorage.getItem('slv3');
+    if(saved){const parsed=JSON.parse(saved);Object.assign(state,parsed)}
+  }catch(e){}
+}
+function saveState() {
+  try{localStorage.setItem('slv3',JSON.stringify(state))}catch(e){}
+}
+loadState();
+
+// ─── DATE HELPERS ───
+function calcCourseDay() {
+  if(state.dayOverride) return parseInt(state.dayOverride);
+  if(!state.startDate) return 0;
+  const start = new Date(state.startDate+"T00:00:00");
+  const now = new Date();
+  const diff = Math.floor((now - start)/(86400000)) + 1;
+  return Math.max(0, Math.min(diff, TOTAL_COURSE_DAYS));
+}
+
+// ─── GATE MAPPING ───
+function getCurrentGateAndDungeon(day) {
+  if(!day||day<=0) return null;
+  for(const gate of GATE_SCHEDULE) {
+    if(day>=gate.startDay && day<=gate.endDay) {
+      const dg = GATE_DUNGEONS[gate.num]||{dungeons:[]};
+      const dungeonDay = day - gate.startDay;
+      const dungeon = dg.dungeons[dungeonDay]||null;
+      return {gate, dungeon, dungeonIndex:dungeonDay, totalDungeons:dg.dungeons.length};
+    }
+  }
+  return null;
+}
+
+function getGatesCompleted() {
+  const day = calcCourseDay();
+  if(!day) return 0;
+  let count=0;
+  for(const gate of GATE_SCHEDULE) {
+    if(day > gate.endDay) count++;
+    else break;
+  }
+  return count;
+}
+
+// ─── XP SYSTEM ───
+function calcTotalXp() {
+  const day = calcCourseDay();
+  if(!day) return 0;
+  let xp=0;
+  for(const gate of GATE_SCHEDULE) {
+    if(day > gate.endDay) {
+      const dg = GATE_DUNGEONS[gate.num];
+      if(dg) dg.dungeons.forEach(d=>{xp+=d.xp||0;});
+    } else if(day>=gate.startDay) {
+      const dg = GATE_DUNGEONS[gate.num];
+      if(dg) {
+        for(let i=0; i<dg.dungeons.length && (gate.startDay+i)<day; i++) {
+          xp+=dg.dungeons[i].xp||0;
+        }
+      }
+    }
+  }
+  return xp;
+}
+
+// ─── RANK ───
+function getRank(xp) {
+  if(xp>=5000) return "S"; if(xp>=4000) return "A+"; if(xp>=3500) return "A";
+  if(xp>=3000) return "A-"; if(xp>=2600) return "B+"; if(xp>=2200) return "B";
+  if(xp>=1800) return "B-"; if(xp>=1500) return "C+"; if(xp>=1200) return "C";
+  if(xp>=900) return "C-"; if(xp>=700) return "D+"; if(xp>=500) return "D";
+  if(xp>=250) return "E→D"; return "E";
+}
+
+// ─── MD RENDERER ───
+function renderMarkdown(md) {
+  if(!md) return '';
+  let html = md;
+  // Code blocks (must be before inline code)
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+  // Inline code
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Headings
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  // Bold
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // Italic
+  html = html.replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, '<em>$1</em>');
+  // Checkboxes
+  html = html.replace(/^- \[ \] (.+)$/gm, '<li class="md-check"><li class="unchecked">$1</li></li>');
+  html = html.replace(/^- \[x\] (.+)$/gm, '<li class="md-check"><li class="checked">$1</li></li>');
+  // Unordered lists
+  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+  // Ordered lists
+  html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+  // Wrap consecutive <li> in <ul>/<ol>
+  html = html.replace(/(<li>.+(?:\n<li>.+)*)/g, '<ul>$1</ul>');
+  // Blockquotes
+  html = html.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+  // Horizontal rules
+  html = html.replace(/^---$/gm, '<hr>');
+  // Tables
+  html = html.replace(/\|(.+)\|\n\|[-| ]+\|\n((?:\|.+\|\n?)*)/g, function(m,header,body){
+    const heads = header.split('|').map(h=>h.trim()).filter(Boolean);
+    const rows = body.trim().split('\n').map(r=>{
+      const cells = r.split('|').map(c=>c.trim()).filter(Boolean);
+      return '<tr>'+cells.map(c=>'<td>'+c+'</td>').join('')+'</tr>';
+    }).join('');
+    return '<table><thead><tr>'+heads.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+rows+'</tbody></table>';
+  });
+  // Links
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  // Paragraphs
+  html = html.replace(/\n\n/g, '</p><p>');
+  html = '<p>'+html+'</p>';
+  // Clean empty paragraphs and fix nesting
+  html = html.replace(/<p><\/p>/g, '');
+  html = html.replace(/<p><(ul|ol|table|blockquote|hr|pre|h[1-3])>/g, '<$1>');
+  html = html.replace(/<\/(ul|ol|table|blockquote|pre|h[1-3])><\/p>/g, '</$1>');
+  // Fix nested list issue from checkbox pattern
+  html = html.replace(/<li class="md-check"><\/li>/g, '');
+  html = html.replace(/class="unchecked"/g, 'class="md-check unchecked"');
+  html = html.replace(/class="checked"/g, 'class="md-check checked"');
+  // Remove empty <li>
+  html = html.replace(/<li><\/li>/g, '');
+  return html;
+}
+
+// ─── MISSION CONTENT ───
+function getMissionMdContent(gate, dungeon) {
+  if(!gate || !dungeon) return '';
+  let text = `## ${dungeon.title}\n\n`;
+  text += `**Concept:** ${dungeon.concept}\n\n`;
+  text += `**Estimated Time:** ${dungeon.est || '25min'}\n\n`;
+
+  if(dungeon.isBoss) {
+    text += `### ⚔️ BOSS BATTLE\n\n`;
+    text += `**Objective:** Complete the boss challenge for **${gate.name}**.\n\n`;
+    text += `**Requirements:** Pass all previous dungeons in this gate.\n\n`;
+    text += `**Rewards:**\n- +${dungeon.xp} XP\n- Gate completion status\n- New rank progression\n\n`;
+    text += `**Tasks:**\n- [ ] Review all dungeon concepts from this gate\n`;
+    text += `- [ ] Complete the integration challenge\n`;
+    text += `- [ ] Verify understanding of all code patterns\n`;
+    text += `- [ ] Document what you learned\n`;
+  } else {
+    text += `### 📖 Study\n\n`;
+    text += `Read through the ${gate.name} gate dungeon ${dungeon.title} section.\n\n`;
+    text += `**Key Concepts to Master:**\n`;
+    text += `- Core principle: ${dungeon.concept}\n`;
+    text += `- Review the code examples provided\n`;
+    text += `- Understand how this connects to previous dungeons\n\n`;
+    text += `### 💻 Code Challenge\n\n`;
+    text += `Apply the concept by writing your own implementation. Try without looking at the provided code first.\n\n`;
+    text += `**Before running the code, predict what it will do:**\n`;
+    text += `- [ ] Write your prediction\n`;
+    text += `- [ ] Run or trace through the code\n`;
+    text += `- [ ] Compare actual vs predicted output\n\n`;
+    text += `### 📝 Journal\n\n`;
+    text += `After completing this dungeon, note:\n`;
+    text += `- What was the most surprising insight?\n`;
+    text += `- What question do you still have?\n`;
+    text += `- Rate your understanding (1-5): ⬜\n\n`;
+    text += `---\n\n`;
+    text += `> *"The only way to learn is to build. The only way to master is to teach."*\n`;
+  }
+
+  return text;
+}
+
+// ─── RENDER FUNCTIONS ───
+function renderStatus() {
+  const day = calcCourseDay();
+  const xp = calcTotalXp();
+  const rank = getRank(xp);
+  const gatesDone = getGatesCompleted();
+  const curr = getCurrentGateAndDungeon(day);
+
+  document.getElementById('currentDay').textContent = day ? `Day ${day}/${TOTAL_COURSE_DAYS}` : 'Not started';
+  document.getElementById('currentGate').textContent = curr ? `${curr.gate.name} (Day ${curr.dungeonIndex+1}/${curr.totalDungeons})` : '—';
+  document.getElementById('courseProgress').textContent = day ? `${Math.round(day/TOTAL_COURSE_DAYS*100)}%` : '0%';
+  document.getElementById('courseProgressBar').style.width = day ? `${Math.round(day/TOTAL_COURSE_DAYS*100)}%` : '0%';
+  document.getElementById('totalXp').textContent = xp;
+  document.getElementById('gatesCompleted').textContent = `${gatesDone} / 12`;
+  document.getElementById('headerRank').textContent = `Rank: ${rank}`;
+
+  // Today's Schedule
+  const sch = document.getElementById('todaySchedule');
+  if(curr) {
+    const dg = curr.dungeon;
+    const dgCls = dg && dg.isBoss ? 'boss-card' : '';
+    sch.innerHTML = `
+      <div class="stat"><span class="stat-label">${curr.gate.name}</span><span class="stat-value">Day ${curr.dungeonIndex+1}/${curr.totalDungeons}</span></div>
+      ${dg ? `<div class="dungeon-item ${dg.isBoss?'boss-dungeon':''}" style="margin-top:8px">
+        <strong>${dg.isBoss?'⚔️ ':'📚 '}${dg.title}</strong>
+        <div style="font-size:12px;color:var(--dim);margin-top:4px">${dg.concept}</div>
+        <div style="font-size:12px;color:var(--dim);margin-top:2px">+${dg.xp} XP | ${dg.est}</div>
+      </div>` : '<div class="empty-state"><p>Rest day or transition</p></div>'}`;
+  } else {
+    sch.innerHTML = `<div class="empty-state"><h3>${day? 'Course complete! 🎉' : 'Set start date in Settings'}</h3></div>`;
+  }
+
+  // Current Boss
+  const boss = document.getElementById('currentBoss');
+  if(curr && curr.dungeon && curr.dungeon.isBoss) {
+    boss.innerHTML = `
+      <div style="text-align:center">
+        <div style="font-size:36px;margin-bottom:8px">⚔️</div>
+        <h3 style="color:var(--red)">${curr.dungeon.title}</h3>
+        <p style="font-size:13px;color:var(--dim);margin:8px 0">${curr.dungeon.concept}</p>
+        <div class="stat"><span class="stat-label">Reward</span><span class="stat-value" style="color:var(--gold)">+${curr.dungeon.xp} XP</span></div>
+      </div>`;
+  } else if(curr) {
+    boss.innerHTML = `<div class="empty-state"><p>Complete all dungeons in this gate to face the boss.</p></div>`;
+  } else {
+    boss.innerHTML = `<div class="empty-state"><h3>${day? '🏆 All gates conquered!' : 'Start your journey'}</h3></div>`;
+  }
+}
+
+function renderMissions() {
+  const day = calcCourseDay();
+  const view = document.getElementById('missionsView');
+  const curr = getCurrentGateAndDungeon(day);
+
+  if(!curr || !curr.dungeon) {
+    view.innerHTML = `<div class="empty-state"><h3>${day ? 'Rest Day / Transition' : 'Set start date in Settings'} </h3></div>`;
+    renderStatus(); return;
+  }
+
+  const {gate, dungeon} = curr;
+  const mdContent = getMissionMdContent(gate, dungeon);
+  const isComplete = !!state.completedDungeons[day];
+  const dungeonKey = `${gate.num}-${curr.dungeonIndex}`;
+  const allDungeons = GATE_DUNGEONS[gate.num] ? GATE_DUNGEONS[gate.num].dungeons : [];
+  const prevComplete = curr.dungeonIndex === 0 || !!state.completedDungeons[gate.startDay + curr.dungeonIndex - 1];
+
+  view.innerHTML = `
+    <div class="mission-banner">
+      <h2>${dungeon.isBoss ? '⚔️ ' : '📚 '}${dungeon.title}</h2>
+      <div class="mission-meta">
+        <span><strong>Gate:</strong> ${gate.name}</span>
+        <span><strong>Day:</strong> ${day}/${TOTAL_COURSE_DAYS}</span>
+        <span><strong>XP:</strong> +${dungeon.xp}</span>
+        <span><strong>Est. Time:</strong> ${dungeon.est || '25min'}</span>
+        <span><strong>Progress:</strong> ${curr.dungeonIndex+1}/${curr.totalDungeons}</span>
+        ${isComplete ? '<span class="badge badge-done">COMPLETED</span>' : ''}
+      </div>
+    </div>
+    <div class="mission-md-content" style="${isComplete ? 'opacity:0.6' : ''}">${renderMarkdown(mdContent)}</div>
+    <div style="margin-top:12px">
+      ${isComplete
+        ? `<span class="badge badge-done" style="font-size:14px;padding:8px 16px">✅ Completed</span>
+           <button class="btn btn-sm" onclick="unmarkDungeonDone()" style="margin-left:8px;background:var(--dim)">↩️ Undo</button>`
+        : `<button class="btn btn-sm" onclick="markDungeonDone()" ${prevComplete || curr.dungeonIndex === 0 ? '' : 'disabled style="opacity:0.4" title="Complete previous dungeon first"'}>✅ Mark as Complete</button>`
+      }
+    </div>
+  `;
+
+  renderStatus();
+}
+
+function renderGates() {
+  const day = calcCourseDay();
+  const list = document.getElementById('gateList');
+  list.innerHTML = '';
+  GATE_SCHEDULE.forEach(g => {
+    const isDone = day > g.endDay;
+    const isCurrent = day >= g.startDay && day <= g.endDay;
+    const isUnlocked = day >= g.startDay;
+    const cls = isDone ? 'done' : (isCurrent ? 'current' : (isUnlocked ? 'unlocked' : ''));
+    const dg = GATE_DUNGEONS[g.num];
+    const dungeonCount = dg ? dg.dungeons.length : 0;
+    const bossCount = dg ? dg.dungeons.filter(d=>d.isBoss).length : 0;
+
+    const li = document.createElement('li');
+    li.className = `gate-item ${cls}`;
+    li.innerHTML = `
+      <div class="gate-num">${g.num}</div>
+      <div class="gate-info">
+        <div class="gate-name">${g.num !== 12 ? `⛩️ GATE ${String(g.num).padStart(2,'0')}` : '🌀 RED GATE'} — ${g.name}</div>
+        <div class="gate-theme">${g.theme} · Rank: ${g.rankReq}</div>
+        <div class="gate-days">${g.days} days · ${dungeonCount} dungeons · ${bossCount} boss(es)</div>
+      </div>
+      <div>${isDone ? '<span class="badge badge-done">DONE</span>' : (isCurrent ? '<span class="badge badge-progress">ACTIVE</span>' : (isUnlocked ? '<span class="badge badge-boss">READY</span>' : '<span class="badge badge-locked">LOCKED</span>'))}</div>
+    `;
+    li.onclick = () => openGateModal(g.num);
+    list.appendChild(li);
+  });
+}
+
+function openGateModal(gateNum) {
+  const gate = GATE_SCHEDULE.find(g=>g.num===gateNum);
+  const dg = GATE_DUNGEONS[gateNum];
+  if(!gate || !dg) return;
+
+  const day = calcCourseDay();
+  const isUnlocked = day >= gate.startDay;
+
+  let dgHtml = dg.dungeons.map((d,i) => {
+    const dDay = gate.startDay + i;
+    const isPast = day > dDay;
+    const isToday = day === dDay;
+    const isComplete = !!state.completedDungeons[dDay];
+    const cls = d.isBoss ? 'boss-dungeon' : (isComplete ? 'done' : '');
+    let statusBadge;
+    if(isComplete) statusBadge = '<span class="badge badge-done">✅ DONE</span>';
+    else if(isToday) statusBadge = '<span class="badge badge-progress">TODAY</span>';
+    else if(isPast) statusBadge = '<span class="badge badge-done">DONE</span>';
+    else statusBadge = '<span class="badge badge-locked">LOCKED</span>';
+    return `<div class="dungeon-item ${cls}">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong>${d.isBoss?'⚔️ ':'📚 '}Day ${i+1}: ${d.title}</strong></div>
+        <div>${statusBadge}</div>
+      </div>
+      <div style="font-size:12px;color:var(--dim);margin-top:4px">${d.concept}</div>
+      <div style="font-size:11px;color:var(--dim);margin-top:2px">+${d.xp} XP · ${d.est||'25min'}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('gateModalContent').innerHTML = `
+    <div class="gate-detail-header">
+      <h2>${gate.num !== 12 ? '⛩️ GATE ' + String(gate.num).padStart(2,'0') : '🌀 RED GATE'} — ${gate.name}</h2>
+      <div class="rank-req">${gate.theme} · Rank Required: ${gate.rankReq} · ${gate.days} Days</div>
+      ${!isUnlocked ? '<div class="badge badge-locked" style="margin-top:8px">🔒 Locked — Complete previous gates first</div>' : ''}
+    </div>
+    ${isUnlocked ? `<div class="dungeon-list">${dgHtml}</div>
+    <div class="stat"><span class="stat-label">Total XP Available</span><span class="stat-value">${dg.dungeons.reduce((s,d)=>s+(d.xp||0),0)}</span></div>` : ''}
+  `;
+  document.getElementById('gateModal').classList.add('active');
+}
+
+function closeGateModal() {
+  document.getElementById('gateModal').classList.remove('active');
+}
+
+// ─── ACTIONS ───
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
+  if(tab==='status') renderStatus();
+  if(tab==='missions') renderMissions();
+  if(tab==='gates') renderGates();
+}
+
+function setStartDate(val) {
+  state.startDate = val;
+  state.dayOverride = null;
+  if(document.getElementById('dayOverride')) document.getElementById('dayOverride').value = '';
+  saveState();
+  renderMissions();
+  renderGates();
+}
+
+function setDayOverride(val) {
+  state.dayOverride = val ? parseInt(val) : null;
+  if(document.getElementById('startDateInput')) document.getElementById('startDateInput').value = state.startDate || '';
+  saveState();
+  renderMissions();
+  renderGates();
+}
+
+function markDungeonDone() {
+  const day = calcCourseDay();
+  if(day) {
+    state.completedDungeons[day] = true;
+    saveState();
+    renderMissions();
+  }
+}
+
+function unmarkDungeonDone() {
+  const day = calcCourseDay();
+  if(day) {
+    delete state.completedDungeons[day];
+    saveState();
+    renderMissions();
+  }
+}
+
+function resetAllData() {
+  if(confirm('This will reset ALL your progress. Are you sure?')) {
+    localStorage.removeItem('slv3');
+    state = {startDate:null,dayOverride:null,completedDungeons:{}};
+    if(document.getElementById('startDateInput')) document.getElementById('startDateInput').value = '';
+    if(document.getElementById('dayOverride')) document.getElementById('dayOverride').value = '';
+    renderMissions();
+    renderGates();
+  }
+}
+
+// ─── INIT ───
+document.addEventListener('DOMContentLoaded', function(){
+  const sd = document.getElementById('startDateInput');
+  if(state.startDate) sd.value = state.startDate;
+  if(state.dayOverride && document.getElementById('dayOverride')) document.getElementById('dayOverride').value = state.dayOverride;
+  renderMissions();
+  renderGates();
+
+  // Auto-refresh at midnight
+  const now = new Date();
+  const msToMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 0, 0, 0, 0) - now;
+  setTimeout(()=>{renderMissions();renderGates()}, msToMidnight + 1000);
+});
+</script>
+</body>
+</html>
